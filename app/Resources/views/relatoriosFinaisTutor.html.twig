@@ -1,0 +1,172 @@
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <link rel="stylesheet" title="Preferred" type="text/css" href="/webfolio/semantic/dist/semantic.min.css">
+        {#<link rel="stylesheet" type="text/css" href="/webfolio/assets/css/sidebarComentarios.css">#}
+        <script type="text/javascript"  src="/webfolio/tinymce/js/tinymce/tinymce.min.js"></script>
+        <script src="/webfolio/node_modules/semantic-ui/node_modules/jquery/dist/jquery.min.js"></script>
+        <script src="/webfolio/semantic/dist/components/visibility.js"></script>
+        <script src="/webfolio/semantic/dist/components/sidebar.js"></script>
+
+        <script src="/webfolio/node_modules/semantic-ui/node_modules/jquery/dist/jquery.min.js"></script>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        {#<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">#}
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+        <script src="/webfolio/semantic/dist/components/transition.js"></script>
+
+        <script src="/webfolio/assets/js/html-docx-js-master/test/vendor/FileSaver.js"></script>
+        <script src="/webfolio/assets/js/html-docx-js-master/dist/html-docx.js"></script>
+        <title>Relatórios</title>
+        <style>
+            @import 'https://fonts.googleapis.com/css?family=Roboto:100,400';
+            html, body{
+                height: 100%;
+            }
+            h2{
+                font-family: 'Roboto', sans-serif;
+                font-weight: 100;
+            }
+            #titulo{
+                color:#666666;
+                margin-bottom:10px;
+            }
+            #barra{
+                border-bottom: 1px solid #666666;
+                width: 90%;
+            }
+            #tituloBarra{
+                width: 90%;
+                height: 50px;
+                position: absolute;
+                left: 15%;
+                top: 5%;
+            }
+            .divRelatorio{
+                position: relative;
+                top:15%;
+                left: 65px;
+                width: 1000px;
+                color: #808080;
+                padding: 15px;
+                min-height: 300px;
+                margin-left: auto;
+                margin-right: auto;
+                margin-bottom: 100px;
+                background-color: white;
+                -webkit-box-shadow: 0px 8px 64px -4px rgba(0,0,0,0.46);
+                -moz-box-shadow: 0px 8px 64px -4px rgba(0,0,0,0.46);
+                box-shadow: 0px 8px 64px -4px rgba(0,0,0,0.46);
+                font-size: 15px;
+            }
+            #tituloAtividade{
+                color: #808080;
+                margin: 10px;
+            }
+            #convert{
+                background-image: url("/webfolio/assets/ICON_DOC.png");
+                background-size: 100% 100%;
+                width: 50px;
+                height: 50px;
+                background-color:transparent;
+                cursor: pointer;
+                position: relative;
+                top: 35px;
+                left: -340px;
+                float: right;
+            }
+                 #convertPdf{
+                background-image: url("/webfolio/assets/ICON_PDF.png");
+                background-size: 100% 100%;
+                width: 50px;
+                height: 50px;
+                background-color:transparent;
+                cursor: pointer;
+                position: relative;
+                top: 35px;
+                left: -350px;
+                float: right;
+                 }
+            #pdf{
+             position: relative;
+             float: right;
+             width: 50px;
+             height:50px;
+            }
+        </style>
+
+    </head>
+    <body>
+
+        {{ include('menuLateralMin.html.twig') }}
+
+        <div id="tituloBarra"><h2 id="titulo">Portfólio Concluído</h2><div id="barra"></div></div> {#>>>Colocar o nome do aluninho<<<#}
+        <div id="convert" disabled data-tooltip="Download DOCX" data-position="bottom center"></div>
+       <a target="_blank" href="{{web_dir}}relatoriosFinaisTutorPDF/{{atividades[0].idPortfolioStudent}}" > <div  id="convertPdf"  disabled data-tooltip="Download PDF" data-position="bottom center"></div></a>
+            {% for at in atividades %}
+
+            <div class="divRelatorio">
+                <div id="tituloAtividade"><h2>{{at.dsTitle}}</h2></div>
+
+                {{at.textoFinal|raw}}
+
+            </div>
+
+                </div>
+        {%endfor%}
+
+    </body>
+</html>
+      <script type="text/javascript">
+    String.prototype.replaceBetween = function (start, end, what) {
+        return this.substring(0, start) + what + this.substring(end);
+    };
+
+    window.onload = function alteraSrc() {
+  console.log("altera src");
+        //mudar extensao das imagens se mp4 e avi = png
+        var imagens = document.getElementsByTagName("img");
+        for (var j = 0; j < imagens.length; j++) {
+            var nomeImagem = imagens[j].src;
+            var extensao = nomeImagem.charAt(nomeImagem.length - 3) + nomeImagem.charAt(nomeImagem.length - 2) + nomeImagem.charAt(nomeImagem.length - 1);
+            if (extensao == "mp4" || extensao == "avi") {
+                novoNome = nomeImagem.replaceBetween((nomeImagem.length - 3), (nomeImagem.length ), "png");
+                imagens[j].src = novoNome;
+            }
+        }
+    }
+   document.getElementById('convert').addEventListener('click', function(e) {
+      e.preventDefault();
+      var divs=document.getElementsByClassName("divRelatorio");
+      var content = '<!DOCTYPE html> <html> <head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"></head> <body style="font-family: Arial;">';
+      for(var i=0; i<divs.length; i++){
+        convertImagesToBase64(i);
+        content+=divs[i].innerHTML;
+      }
+      content += ' </body> </html>';
+      var converted = htmlDocx.asBlob(content, {orientation: 'portrait'});
+      saveAs(converted, 'Portfólio.docx');
+
+      });
+
+    function convertImagesToBase64 (i) {
+        var divs=document.getElementsByClassName("divRelatorio");
+        var contentDocument = divs[i];
+      var regularImages = contentDocument.querySelectorAll("img");
+      var canvas = document.createElement('canvas');
+      var ctx = canvas.getContext('2d');
+      [].forEach.call(regularImages, function (imgElement) {
+        // preparing canvas for drawing
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        canvas.width = imgElement.width;
+        canvas.height = imgElement.height;
+
+        ctx.drawImage(imgElement, 0, 0);
+        // by default toDataURL() produces png image, but you can also export to jpeg
+        // checkout function's documentation for more details
+        var dataURL = canvas.toDataURL();
+        imgElement.setAttribute('src', dataURL);
+      })
+      canvas.remove();
+    }
+</script>

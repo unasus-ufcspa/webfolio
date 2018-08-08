@@ -1,0 +1,39 @@
+@import 'https://fonts.googleapis.com/css?family=Roboto:100,400';
+* {
+    font-family: 'Roboto', sans-serif;
+    font-weight: 100;
+}
+.grid {
+    height: 100%;
+}
+.image {
+    margin-top: -100px;
+}
+.column {
+    max-width: 450px;
+}
+.ui.form input:not([type]), .ui.form input[type=text], .ui.form input[type=password], .ui.form input[type=email]{
+    border-bottom: 1px solid #BBBBBB;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    border-radius: 0px;
+}
+.ui.form input[type=text]:focus,.ui.form input[type=tel], .ui.form input[type=password]:focus, .ui.form input[type=email]:focus{
+    border-radius: 0px;
+}
+#iconeUsuario{
+    margin-top: 15px;
+    margin-right: 5px;
+}
+.ui.button{
+    background-color: #70e7d0;
+    border-radius: 0px;
+    color: #808080;
+}
+.mensagemPHP{
+  margin: auto;
+  width: 400px;
+  position: relative;
+  top: 73%;
+}

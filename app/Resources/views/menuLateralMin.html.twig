@@ -1,0 +1,185 @@
+     <script>
+ (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+ (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+ m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+ })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+ ga('create', 'UA-45952230-6', 'auto');
+ ga('send', 'pageview');
+
+</script>
+<style>
+    @import 'https://fonts.googleapis.com/css?family=Roboto:100,300,400';
+    body, p, span{
+        font-family: 'Roboto', sans-serif;
+        font-weight: 100;
+    }
+    #menuLateral{
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding: 0;
+        margin: 0;
+        list-style: none;
+        background-color: grey;
+        height: 50vh;
+        transition: all .2s linear;
+        overflow:hidden;
+        overflow-y:hidden;
+    }
+    #port2, #ativ2, #arq2, #ref2, #relat2{
+        visibility: hidden;
+        display: none;
+        font-size: large;
+        margin-top:20px;
+        margin-left:20px;
+    }
+    #conf2{
+        visibility: hidden;
+        display: none;
+        font-size: large;
+        margin-top:25px;
+        margin-left:20px;
+    }
+    .ui.inverted.grey.menu .item:before{
+        background-color: rgb(128, 128, 128);
+    }
+    div#menuLateral.ui.visible.inverted.left.vertical.grey.sidebar.mini.menu{
+        width:130px;
+    }
+    a .item{
+        padding: 20px;
+    }
+    .item img{
+        width:70px;
+    }
+</style>
+<div id="menuLateral" class="ui visible inverted left vertical grey sidebar mini menu" onload="selecionaItemMenu();">
+    <a class="item">
+        <img class="ui centered tiny image" src="/webfolio/assets/ExportaçãoTutor-17.png"> 
+    </a>
+   <a class="item" href="{{web_dir}}portfolios" id="portfolios">
+        <img id="port1" class="ui centered image" width="70" src="/webfolio/assets/menuLateral/iconPortfolios2.png" ><span id="port2">portfólios</span>
+    </a>
+{% if app.session.get('portfolio') is not empty  %}
+     <a class="item" href="{{web_dir}}ultimoPortfolio/0" id="atividades">
+        <img id="ativ1" class="ui centered image" width="70" src="/webfolio/assets/menuLateral/iconAtividadeR2.png"><span id="ativ2">atividades</span>
+    </a>
+{%else%}
+     <a class="item" id="portfolios" id="atividades">
+        <img id="ativ1" class="ui centered image" width="70" src="/webfolio/assets/menuLateral/iconAtividadeR2.png"><span id="ativ2">atividades</span>
+    </a>
+{%endif%}
+
+    <a class="item" href="{{web_dir}}carregaAnexos" id="arquivos">
+        <img id="arq1" class="ui centered image" width="70" src="/webfolio/assets/menuLateral/iconArquivos2.png"><span id="arq2">arquivos</span>
+    </a>
+    <a class="item" href="{{web_dir}}anotacoes"  id="referencias">
+        <img id="ref1" class="ui centered image" width="70" src="/webfolio/assets/menuLateral/iconReferencias2.png"><span id="ref2">anotações</span>
+    </a>
+    <a class="item" href="{{web_dir}}relatoriosTurmas" id="relatorios">
+        <img id="relat1" class="ui centered  image" width="70" src="/webfolio/assets/menuLateral/iconRelatorios2.png"><span id="relat2">relatórios</span>
+    </a>
+    <a class="item" href="{{web_dir}}config" id="configuracoes">
+        <img id="conf1" class="ui centered  image" width="70" src="/webfolio/assets/menuLateral/iconConfiguracoes2.png"><span id="conf2">configurações</span>
+    </a>
+</div>
+<script>
+    array1 = ["port1", "ativ1", "arq1", "ref1", "relat1", "conf1"];
+    array2 = ["port2", "ativ2", "arq2", "ref2", "relat2", "conf2"];
+    function maxMenu() {
+        var menu = document.getElementById("menuLateral");
+        menu.className = "ui visible inverted left vertical grey sidebar medium menu";
+
+        for (var i = 0; i < array1.length; i++) {
+            var elem1 = document.getElementById(array1[i]);
+            elem1.style.float = "left";
+            elem1.style.marginLeft = "10px";
+        }
+        setTimeout(myFunction, 190);
+    }
+    function minMenu() {
+        var menu = document.getElementById("menuLateral");
+        menu.className = "ui visible inverted left vertical grey sidebar mini menu";
+
+        for (var i = 0; i < array1.length; i++) {
+            var elem2 = document.getElementById(array2[i]);
+            elem2.style.visibility = "hidden";
+            elem2.style.display = "none";
+            var elem1 = document.getElementById(array1[i]);
+            elem1.style.visibility = "visible";
+        }
+    }
+    function myFunction(){
+        for (var i = 0; i < array1.length; i++) {
+            var elem2 = document.getElementById(array2[i]);
+            elem2.style.display = "inline-block";
+            elem2.style.visibility = "visible";
+        }
+    }
+    $(document).ready(function () {
+        
+        $("#menuLateral").mouseenter(function () {
+            maxMenu();
+        });
+        $("#menuLateral").mouseleave(function () {
+            minMenu();
+        });
+    });
+    (function() {
+    document.onmousemove = handleMouseMove;
+    function handleMouseMove(event) {
+        var dot, eventDoc, doc, body, pageX;
+
+        event = event || window.event; // IE-ism
+
+        // If pageX/Y aren't available and clientX/Y are,
+        // calculate pageX/Y - logic taken from jQuery.
+        // (This is to support old IE)
+        if (event.pageX === null && event.clientX !== null) {
+            eventDoc = (event.target && event.target.ownerDocument) || document;
+            doc = eventDoc.documentElement;
+            body = eventDoc.body;
+
+            event.pageX = event.clientX +
+              (doc && doc.scrollLeft || body && body.scrollLeft || 0) -
+              (doc && doc.clientLeft || body && body.clientLeft || 0);
+        }
+        
+        // Use event.pageX / event.pageY here
+        if(event.pageX > 260){
+            minMenu();
+        }
+    }
+})();
+
+    window.onload=function selecionaItemMenu(){
+        var linkAtual = document.URL;
+        if(linkAtual.indexOf("portfolios") !== -1){
+            var item = document.getElementById("portfolios");
+            item.style.backgroundColor="#8a8a8a";
+        }
+        if(linkAtual.indexOf("ultimoPortfolio") !== -1){
+            var item = document.getElementById("atividades");
+            item.style.backgroundColor="#8a8a8a";
+        }
+        if(linkAtual.indexOf("carregaAnexos") !== -1){
+            var item = document.getElementById("arquivos");
+            item.style.backgroundColor="#8a8a8a";
+        }
+        if(linkAtual.indexOf("anotacoes") !== -1){
+            var item = document.getElementById("referencias");
+            item.style.backgroundColor="#8a8a8a";
+        }
+        if(linkAtual.indexOf("relatorios") !== -1){
+            var item = document.getElementById("relatorios");
+            item.style.backgroundColor="#8a8a8a";
+        }
+        if(linkAtual.indexOf("config") !== -1){
+            var item = document.getElementById("configuracoes");
+            item.style.backgroundColor="#8a8a8a";
+        }
+    }
+</script>
+
+

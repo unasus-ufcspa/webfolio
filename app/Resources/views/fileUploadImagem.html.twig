@@ -1,0 +1,16 @@
+{# empty Twig template #}
+<script src="/webfolio/jcarousellite/demo/script/jquery-1.11.1.js"></script>
+ <link rel="stylesheet" type="text/css" href="/webfolio/semantic/dist/semantic.min.css">
+<script type="text/javascript">
+    function carregaImagem() {
+        $("#sendFiles").append("<button class='ui labeled icon button' type='submit'><i class='upload icon'></i> Carregar Imagem</button>");
+    }
+
+</script>
+<form id='sendFiles' action="/webfolio/app_dev.php/uploadWeb" method="post" enctype="multipart/form-data">
+    
+  
+    <input type='file' name='arquivo' onChange='carregaImagem();' accept="image/png, image/jpeg, image/jpg, image/gif">
+
+</form>
+

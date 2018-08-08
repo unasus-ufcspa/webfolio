@@ -1,0 +1,56 @@
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <link rel="stylesheet" title="Preferred" type="text/css" href="/webfolio/semantic/dist/semantic.min.css">
+        {#<link rel="stylesheet" type="text/css" href="/webfolio/assets/css/sidebarComentarios.css">#}
+        <script type="text/javascript"  src="/webfolio/tinymce/js/tinymce/tinymce.min.js"></script>
+        <script src="/webfolio/node_modules/semantic-ui/node_modules/jquery/dist/jquery.min.js"></script>
+        <script src="/webfolio/semantic/dist/components/visibility.js"></script>
+        <script src="/webfolio/semantic/dist/components/sidebar.js"></script>
+
+        <script src="/webfolio/node_modules/semantic-ui/node_modules/jquery/dist/jquery.min.js"></script>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        {#<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">#}
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+        <link rel="stylesheet" type="text/css" href="/webfolio/assets/css/relatoriosAlunos.css">
+        <title>Relatórios</title>
+    </head>
+    <body>
+        {{ include('menuLateralMin.html.twig') }}
+
+        {%if alunos is empty%}
+            <div class="ui grid container fluid">
+                <div class="ui two column centered grid">
+
+                    <div class="column">
+
+                        <span>Não há alunos finalizados!</span>
+                    </div>
+
+                </div>
+            </div>
+        {%endif%}
+        <div id="tituloBarra"><h2 id="titulo">Portfólio da Turma</h2><div id="barra"></div></div>
+        <div id="divRelatorios">
+
+            {% for at in alunos %}
+                {% set nomePadrao = at.nmUser|split(' ') %}
+                
+                <a href="{{web_dir}}relatoriosFinaisTutor/{{at.idUser}}">
+               
+                    {% if at.foto is empty %}
+                        <div id="itemAluno" title="{{ at.nmUser }}"></div>
+                    {%else%}
+                        <div title="{{ at.nmUser }}" id="itemAlunoFoto" style="background-image: url('data:image/jpeg;base64,{{ at.foto}}');"></div>
+                    {%endif%}
+                    {%if nomePadrao|length >= 2%}
+                        <span id="nomeAluno">{{nomePadrao[0]}} {{nomePadrao[1]}}</span>
+                    {% else %}
+                        <span id="nomeAluno">{{nomePadrao[0]}}</span>
+                    {% endif%}
+                </a>
+            {%endfor%}
+        </div>
+    </body>
+</html>

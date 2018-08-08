@@ -1,0 +1,228 @@
+<script type="text/javascript">
+    var carrega = 1;
+    var notifica = false;
+    carregaMenuVersoes();
+
+    {#    setInterval(function () {
+            carregaMenuVersoes();
+        }, 5000);#}
+            function  carregaMenuVersoes() {
+                var dataString = 'atividade=' + {{ app.session.get('atividadeAtual') }};
+                        console.log("String última versão " + dataString);
+
+                    $(function () {
+                    $("#menuVersoes").html("");
+                    $.ajax({
+                        type: "POST",
+                        url: "{{web_dir}}carregaMenuVersoes", //tirar o app.dev/
+                        data: dataString,
+                        success: function (resp) {
+                            var tamanho = resp.length;
+                            console.debug(resp);
+                            var cont = tamanho;
+                            for (i = tamanho - 1; i >= 0; i--) {
+                                if (resp[i].dtSubmission == null) {
+                                    $("#menuVersoes").append("<a href=" + resp[i].idVersionActivity + ">" +
+                                            "<div class='numVersion'><h1>" + cont + "</h1></div>" +
+                                            " <div class='item' style='color:black' data-value=" + resp[i].idVersionActivity + "><h3>Versão Atual</h3></div> " +
+                                            "</a>");
+                                    ultimaVersao = resp[i].idVersionActivity;
+                                    cont--;
+                                }
+                            }
+                            var flag = 0;
+                            for (i = tamanho - 1; i >= 0; i--) {
+                                if (resp[i].dtSubmission != null) {
+                                    var dataHora = resp[i].dtSubmission.split(" ");
+                                    var ano = dataHora[0].substring(8, 10) + "/" + dataHora[0].substring(5, 7) + "/" + dataHora[0].substring(0, 4);
+                                    var hora = dataHora[1].substring(0, 5);
+
+                                    if (resp[i].totalNotices > 0) {//Dentro do if caso tenha notificação
+                                        notifica = true;
+                                        $(".right.floated.eigth.wide.column").append("<img src='/webfolio/assets/specific_comment_ballon.png' class='noticeSuperior'>");//aqui tem que colocar o balaozinho dizendo que tem notificacao
+
+                                        if (flag !== 0) {
+                                            $("#menuVersoes").append("<a onclick='readNoticeComments(" + resp[i].idVersionActivity + ");' href='" + resp[i].idVersionActivity + "'>" +
+                                                    "<div class='numVersion'><h1>" + cont + "</h1></div>" +
+                                                    "<span class='noticeVersion'>" + resp[i].totalNotices + "</span>" +
+                                                    " <div class='item' style='color:black; margin-top: 15px;' data-value=" + resp[i].idVersionActivity + "><span id='ano'><h3 id='dtAtividade'>" + ano + "</h3></span><span id='hora'>" + hora + "</span></div> " +
+                                                    "</a>");
+                                            cont--;
+                                        } else {
+                                            var is_firefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
+                                            if(is_firefox){
+                                                $("#menuVersoes").append("<a onclick='readNoticeComments(" + resp[i].idVersionActivity + ");' href='" + resp[i].idVersionActivity + "'>" +
+                                                        "<div class='numVersion' style='margin-left: -50px; margin-top: 15px;'><h1>" + cont + "</h1></div>" +
+                                                        "<span class='noticeVersion'>" + resp[i].totalNotices + "</span>" +
+                                                        " <div class='item' style='color:black; margin-top: 15px;' data-value=" + resp[i].idVersionActivity + "><span id='ano' style='margin-left: 60px;'><h3 id='dtAtividade'>" + ano + "</h3></span><span id='hora'>" + hora + "</span></div> " +
+                                                        "</a>");
+                                                cont--;
+                                                flag = 1;
+                                            }else{
+                                                $("#menuVersoes").append("<a onclick='readNoticeComments(" + resp[i].idVersionActivity + ");' href='" + resp[i].idVersionActivity + "'>" +
+                                                        "<div class='numVersion' style='margin-left: -50px; margin-top: 15px;'><h1>" + cont + "</h1></div>" +
+                                                        "<span class='noticeVersion'>" + resp[i].totalNotices + "</span>" +
+                                                        " <div class='item' style='color:black; margin-top: 15px;' data-value=" + resp[i].idVersionActivity + "><span id='ano'><h3 id='dtAtividade'>" + ano + "</h3></span><span id='hora'>" + hora + "</span></div> " +
+                                                        "</a>");
+                                                cont--;
+                                                flag = 1;
+                                            }
+                                        }
+                                    }else{//Dentro do else caso não tenha notificação
+                                      if (flag != 0) {
+                                          $("#menuVersoes").append("<a href=" + resp[i].idVersionActivity + ">" +
+                                                  "<div class='numVersion'><h1>" + cont + "</h1></div>" +
+                                                  "<div class='item' style='color:black; margin-top: 15px;' data-value=" + resp[i].idVersionActivity + "> <span id='ano'><h3>" + ano + "</h3></span><span id='hora'>" + hora + "</span></div> " +
+                                                  "</a>");
+                                          cont--;
+                                      }else{
+                                          var is_firefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
+                                          if(is_firefox){
+                                              $("#menuVersoes").append("<a href=" + resp[i].idVersionActivity + ">" +
+                                                  "<div class='numVersion' style='margin-left: -50px; margin-top: 15px;'><h1>" + cont + "</h1></div>" +
+                                                  "<div class='item' style='color:black; margin-top: 15px;' data-value=" + resp[i].idVersionActivity + "> <span id='ano' style='margin-left: 60px;'><h3>" + ano + "</h3></span><span id='hora'>" + hora + "</span></div> " +
+                                                  "</a>");
+                                              cont--;
+                                              flag = 1;
+                                          }else{
+                                              $("#menuVersoes").append("<a href=" + resp[i].idVersionActivity + ">" +
+                                                  "<div class='numVersion' style='margin-left: -50px; margin-top: 15px;'><h1>" + cont + "</h1></div>" +
+                                                  "<div class='item' style='color:black; margin-top: 15px;' data-value=" + resp[i].idVersionActivity + "> <span id='ano'><h3>" + ano + "</h3></span><span id='hora'>" + hora + "</span></div> " +
+                                                  "</a>");
+                                              cont--;
+                                              flag = 1;
+                                          }
+                                      }
+                                  }
+                                  ultimaVersao = resp[i].idVersionActivity;
+                            }
+                        }
+                    }
+                });
+            });
+        }
+
+        function readNoticeComments(idVersionActivity) {
+            var dataString = 'atividade=' + {{ app.session.get('atividadeAtual') }}+'&idVersionActivity=' + idVersionActivity;
+            $(function () {
+                $.ajax({
+                    type: "POST",
+                    url: "{{web_dir}}readNoticeComments",
+                    data: dataString,
+                    success: function (resp) {
+                        console.debug(resp);
+                    }
+                });
+            });
+        }
+</script>
+
+<style type="text/css">
+    .numVersion{
+        background-color: white;
+        border: 2px solid #70e7d0;
+        text-align: center;
+        color: #808080;
+        margin-top: 5%;
+        margin-left: 5%;
+        float: left;
+    }
+    #menuVersoes.a.div.item{
+        margin-top: 15px;
+    }
+    #dtAtividade{
+        margin-left: -20px;
+    }
+    .numVersion h1{
+        margin-top: 10%;
+    }
+    .ui.dropdown img{
+        margin-top:-2%;
+        margin-left: -20%;
+    }
+    .versoes{
+        position: fixed;
+        right: 10%;
+        top: 10%;
+    }
+    .noticeSuperior{
+        position: fixed;
+        right: 21.1%;
+        top: 0%;
+        width: 20px;
+        height: 23px;
+    }
+    #menuVersoes{
+        min-width: 230px;
+        min-height: 70px;
+        max-height:500px;
+        overflow-y: auto;
+        margin-left: -75%;
+    }
+    #MV.ui.inverted.grey.menu .item:before {
+        background-color: #FFF;
+    }
+    #MV.ui.inverted.grey.menu{
+        z-index: 97;
+    }
+    .noticeVersion{
+        position: relative;
+        float:left;
+        top: 7px;
+        right: 21%;
+        background-color: #70e7d0;
+        -webkit-border-radius:50%;
+        -moz-border-radius:50%;
+        border-radius: 50%;
+        height: 25px;
+        width: 25px;
+        color: white;
+        text-align: center;
+        line-height: 25px;
+    }
+    #ano{
+        float: left;
+        position: relative;
+        top: -18px;
+    }
+    #hora{
+        position: relative;
+        top: 10px;
+        left: -100px;
+        float: left;
+    }
+    #nomeAtividade{
+        font-family: 'Roboto', sans-serif;
+        font-weight: 100;
+        color: #CCC;
+        position: relative;
+        left: 10%;
+    }
+    @media all and (max-width: 1400px) {
+        #nomeAtividade{
+          left:15%;
+        }
+    }
+    @media all and (max-width: 950px) {
+        #nomeAtividade{
+          left:20%;
+        }
+    }
+</style>
+<div id="MV" class="ui visible inverted top big grey sidebar menu">
+    {%if nomeAtividade|length < 40 %}
+        <h1 id="nomeAtividade">{{nomeAtividade}}</h1>
+    {%else%}
+        <h1 id="nomeAtividade">{{nomeAtividade[:40]}}</h1>
+    {%endif%}
+
+    <div class="ui grid" style="position: fixed; right:20%;">
+        <div class="right floated eigth wide column">
+            <div class="ui dropdown">
+                <img class="ui top aligned image small" src="/webfolio/assets/Fólio3-extra2-39.png">
+                <div class="menu" id="menuVersoes">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

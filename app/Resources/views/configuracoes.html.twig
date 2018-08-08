@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <!-- Standard Meta -->
+        <title>Configurações</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <link rel="stylesheet" title="Preferred" type="text/css" href="/webfolio/semantic/dist/semantic.min.css">
+        <link rel="stylesheet" type="text/css" href="/webfolio/assets/css/sidebarComentarios.css">
+        <link rel="stylesheet" type="text/css" href="/webfolio/assets/css/configuracoes.css">
+        <script type="text/javascript"  src="/webfolio/tinymce/js/tinymce/tinymce.min.js"></script>
+        <script src="/webfolio/node_modules/semantic-ui/node_modules/jquery/dist/jquery.min.js"></script>
+        <script src="/webfolio/semantic/dist/components/visibility.js"></script>
+        <script src="/webfolio/semantic/dist/components/sidebar.js"></script>
+
+
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        {#<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">#}
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+        <script src="/webfolio/semantic/dist/components/transition.js"></script>
+        <script src="/webfolio/semantic/dist/components/popup.js"></script>
+
+
+        <script type="text/javascript">
+            function readURL(input, id) {
+                if (input.files && input.files[0]) {
+                    var reader = new FileReader();
+
+                    reader.onload = function (e) {
+                        console.log(e.target.result);
+                        $('.' + id)
+                                .attr('style', 'background-image: url("' + e.target.result + '");background-size:100%')
+                                ;
+                    };
+
+                    reader.readAsDataURL(input.files[0]);
+                }
+            }
+
+
+            $(function () {
+                $("#salvarInfoTwo").click(function () {
+                    console.log("alterar senha");
+                    var senhaAtual = document.getElementsByName("senhaAtual")[0].value;
+                    var novaSenha = document.getElementsByName("novaSenha")[0].value;
+                    var confirma = document.getElementsByName("confirmarSenha")[0].value;
+
+                    var dataString = 'senhaAtual=' + senhaAtual + '&novaSenha=' + novaSenha + '&confirmarSenha=' + confirma;
+                    //  alert(dataString);
+
+                    $.ajax({
+                        type: "POST",
+                        url: "{{web_dir}}atualizaInfoTwo",
+                        data: dataString,
+                        success: function (resp) {
+                            console.log("sucesso");
+                            console.log("erro: " + resp.erro);
+                            var mensagem = document.getElementsByClassName('message')[0];
+                            if (mensagem == undefined) {
+                                if (resp.success != undefined && resp.erro == undefined) {
+                                    $("#senha").append("<div class='ui success message'> \n\
+                                     <i class='close icon'></i>  \n\
+                                    <div class='header'>" + resp.success + "</div>\n\
+                                     </div>");
+                                } else {
+                                    if (resp.erro != undefined) {
+                                        $("#senha").append("<div class='ui error message'> \n\
+                                     <i class='close icon'></i>  \n\
+                                    <div class='header'>" + resp.erro + "</div>\n\
+                                      </div>");
+                                    }
+                                }
+
+                            } else {
+                                if (resp.success != undefined && resp.erro == undefined) {
+                                    $('.ui.error.message').removeClass("transition hidden");
+                                    $('.ui.error.message').toggleClass('success', 'error');
+                                    $('div.header').html(resp.success);
+                                } else {
+                                    if (resp.erro != undefined)
+                                        console.log("aqyiu=");
+                                    $('.ui.error.message').removeClass("transition hidden");
+                                    $('div.header').html(resp.erro);
+                                }
+                            }
+
+
+                            $('.message .close')
+                                    .on('click', function () {
+                                        $(this)
+                                                .closest('.message')
+                                                .transition('fade')
+                                                ;
+                                    });
+
+                        },
+                        error: function (e) {
+
+                        }
+                    });
+                    return false;
+                });
+            });
+
+
+        </script>
+    </head>
+    <body>
+        {{ include('menuLateralMin.html.twig') }}
+        <div id="tituloBarra"><h2 id="titulo">Configurações</h2><div id="barra"></div></div>
+          <div id="info">
+              <form class="ui large form" action="{{web_dir}}atualizaInfoOne" method="post" enctype="multipart/form-data">
+                  <div style="margin-bottom: 40px; padding-top: 80px;">
+                      <i id="labelFoto">FOTO</i>
+                      {% if dados.foto is empty %}
+                          <div id="iconAluno">
+                              <label for='fotoPerfil' class="fotoDefault" style="background-image:url('/webfolio/assets/pessoa.png');background-repeat: no-repeat; background-position: center;background-size:100%;"></label>
+                              <input type='file' name='fotoPerfil' id="fotoPerfil" onchange="readURL(this, 'fotoDefault');">
+                          </div>
+                      {% else %}
+                          <label for='fotoPerfil' class="fotoUsuario" style="background-image: url('data:image/jpeg;base64,{{ dados.foto}}');background-repeat: no-repeat;background-position: center; background-size:100%;"></label>
+                          <input type='file' name='fotoPerfil' id="fotoPerfil" onchange="readURL(this, 'fotoUsuario');">
+                      {% endif %}
+                  </div>
+
+                  <i>NOME</i><br>
+                  {% if dados.nm_user is empty %}
+                      <input type="text" name="nome">
+                  {%else%}
+                      <input type="text" name="nome" value="{{dados.nm_user}}" required>
+                  {% endif  %}
+
+                  <br><i>TELEFONE</i><br>
+                  {% if dados.nu_cellphone is empty %}
+                      <input type="text" name="telefone" >
+                  {%else%}
+                      <input type="tel" name="telefone" value="{{dados.nu_cellphone}}" >
+                  {% endif  %}
+
+                  <div style="text-align:center;">
+                      <input type="submit" value="SALVAR" class="ui button" id="salvarInfoOne">
+                  </div>
+              </form>
+          </div>
+
+          <div id="senha">
+              <form class="ui large form" action="{{web_dir}}atualizaInfoTwo" method="post" >
+                  <i>SENHA ATUAL</i><br>
+                  <input id="formSenha" type="password" name="senhaAtual" required>
+                  <br><i>NOVA SENHA</i><br>
+                  <input id="formSenha" type="password" name="novaSenha"><i class="unlock alternate icon" required></i>
+                  <br><i>CONFIRMAR SENHA</i><br>
+                  <input id="formSenha" type="password" name="confirmarSenha"><i class="lock icon" required></i>
+
+                  <div style="text-align:center;">
+                      <input type="submit" value="SALVAR" class="ui button" id="salvarInfoTwo">
+                  </div>
+              </form>
+          </div>
+
+        <a href="{{web_dir}}logoutWeb"><div id="sair" class="ui teal medium button">SAIR</div></a>
+    </body>
+</html>

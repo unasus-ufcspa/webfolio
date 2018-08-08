@@ -1,0 +1,141 @@
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <link rel="stylesheet" title="Preferred" type="text/css" href="/webfolio/semantic/dist/semantic.min.css">
+        {#<link rel="stylesheet" type="text/css" href="/webfolio/assets/css/sidebarComentarios.css">#}
+        <script type="text/javascript"  src="/webfolio/tinymce/js/tinymce/tinymce.min.js"></script>
+        <script src="/webfolio/node_modules/semantic-ui/node_modules/jquery/dist/jquery.min.js"></script>
+        <script src="/webfolio/semantic/dist/components/visibility.js"></script>
+        <script src="/webfolio/semantic/dist/components/sidebar.js"></script>
+
+        <script src="/webfolio/node_modules/semantic-ui/node_modules/jquery/dist/jquery.min.js"></script>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        {#<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">#}
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+        <script src="/webfolio/semantic/dist/components/transition.js"></script>
+        <title>Relatórios</title>
+        <style>
+            @import 'https://fonts.googleapis.com/css?family=Roboto:100,400';
+            html, body{
+                height: 100%;
+            }
+            span{
+                font-weight: 400;
+            }
+            h2{
+                font-family: 'Roboto', sans-serif;
+                font-weight: 100;
+            }
+            #titulo{
+                color:#666666;
+                margin-bottom:10px;
+            }
+            #barra{
+                border-bottom: 1px solid #666666;
+                width: 500px;
+            }
+            #tituloBarra{
+                width: 600px;
+                height: 50px;
+                position: absolute;
+                left: 15%;
+                top: 5%;
+            }
+            #divRelatorios{
+                margin-left: 15%;
+                width: 80%;
+                min-height: 70%;
+                margin-top:8%;
+            }
+            #itemTurma{
+                color: #fff;
+                width: 150px;
+                height: 150px;
+                margin: 10px 30px 10px 0;
+                border: 1px solid #CCCCCC;
+                background-color: #CCCCCC;
+                padding: 10px;
+                float: left;
+                position: relative;
+            }
+            #itemTurma span{
+                position: absolute;
+                bottom: 2px;
+            }
+            #itemTurma p{
+                color: #808080;
+            }
+            #nenhumConcluido{
+                margin-top: 50%;
+                width: 400px;
+                color: #808080;
+                text-align: center;
+            }
+        </style>
+    </head>
+    <body>
+
+        {{ include('menuLateralMin.html.twig') }}
+
+        {%if portfolios is empty%}
+            <div class="ui grid container fluid">
+                <div class="ui two column centered grid">
+
+                    <div class="column">
+
+                        <h2 id="nenhumConcluido">Nenhum Portfólio Concluído</h2>
+                    </div>
+
+                </div>
+            </div>
+        {%endif%}
+
+
+        {%if portfolios.student is defined%}
+            {% for at in portfolios.student %}
+                <div id="tituloBarra"><h2 id="titulo">Relatórios Finais</h2><div id="barra"></div></div>
+                <div id="divRelatorios">
+
+
+                    <a href="{{web_dir}}relatoriosFinaisAluno/{{ at.idPortfolioClass}}">    {# >>>LINK PRA PRÓXIMA PAGINA<<< #}
+                        <div id="itemTurma">
+                            <span>{{ at.dsCode }}<p>{{ at.dsTitle }}</p></span> {# >>>COLOCAR O CODIGO DA TURMA E O NUMERO DO PORTFÓLIO<<< #}
+                        </div>
+                    </a>
+
+
+                </div>
+            {%endfor%}
+        {%endif%}
+
+
+        {%if portfolios.tutor is defined %}
+            <div id="tituloBarra"><h2 id="titulo">Relatórios Finais</h2><div id="barra"></div></div>
+            <div id="divRelatorios">
+                {% for at in portfolios.tutor %}
+
+                    <a href="{{web_dir}}relatoriosAlunos/{{ at.idPortfolioClass}}">    {# >>>LINK PRA PRÓXIMA PAGINA<<< #}
+                        <div id="itemTurma">
+                            <span>{{ at.dsCode }}<p>{{ at.dsTitle }}</p></span> {# >>>COLOCAR O CODIGO DA TURMA E O NUMERO DO PORTFÓLIO<<< #}
+                        </div>
+                    </a>
+                {%endfor%}
+            {%endif%}    
+            {%if portfolios.visitante is defined %}
+                <div id="tituloBarra"><h2 id="titulo">Relatórios Finais</h2><div id="barra"></div></div>
+                <div id="divRelatorios">
+                    {% for at in portfolios.visitante %}
+
+                        <a href="{{web_dir}}relatoriosAlunosVisitante/{{ at.idPortfolioClass}}">    {# >>>LINK PRA PRÓXIMA PAGINA<<< #}
+                            <div id="itemTurma">
+                                <span>{{ at.dsCode }}<p>{{ at.dsTitle }}</p></span> {# >>>COLOCAR O CODIGO DA TURMA E O NUMERO DO PORTFÓLIO<<< #}
+                            </div>
+                        </a>
+                    {%endfor%}
+                </div>
+
+            {%endif%}
+
+    </body>
+</html>

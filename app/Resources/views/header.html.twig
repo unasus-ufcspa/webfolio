@@ -1,0 +1,39 @@
+{# empty Twig template #}
+<style type="text/css">
+    .imagem {
+        margin-top: 50px;
+        margin-bottom: 50px;
+        height: 250px;
+        width: 250px;
+    }
+    .config{
+        margin-top:19px;
+        position: fixed;
+        right:15.5%;
+    }
+    #config{
+        -webkit-filter: invert(1);
+        filter: invert(50%);
+    }
+</style>
+<script src="/webfolio/semantic/dist/components/dropdown.min.js"></script>
+
+<div class="ui middle aligned center aligned grid">
+    <h3 class="ui teal middle aligned  image">
+        <img src="/webfolio/assets/folio_logo_final.png" class="imagem">
+    </h3>
+    <div class="config">
+        <div class="ui text menu">
+            <div class="ui dropdown item">
+                <img src="/webfolio/assets/ExportaçãoTutor-06.png" id="config" class="ui circular image mini">
+                <div class="menu">
+                    <div class="item"><a href="{{web_dir}}logoutWeb" style="color: gray">Sair</a></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    $('.ui.dropdown')
+            .dropdown();
+</script>

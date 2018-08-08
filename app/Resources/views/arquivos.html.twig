@@ -1,0 +1,312 @@
+{# empty Twig template #}
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <link rel="stylesheet" title="Preferred" type="text/css" href="/webfolio/semantic/dist/semantic.min.css">
+        <link rel="stylesheet" type="text/css" href="/webfolio/assets/css/sidebarComentarios.css">
+        <script type="text/javascript"  src="/webfolio/tinymce/js/tinymce/tinymce.min.js"></script>
+        <script src="/webfolio/node_modules/semantic-ui/node_modules/jquery/dist/jquery.min.js"></script>
+        <script src="/webfolio/semantic/dist/components/visibility.js"></script>
+        <script src="/webfolio/semantic/dist/components/sidebar.js"></script>
+
+
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        {#<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">#}
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+        <script src="/webfolio/semantic/dist/components/transition.js"></script>
+        <title>Arquivos</title>
+        <script type="text/javascript">
+            function addFile() {
+                var card = document.getElementById("cardContent");
+                if (card.className !== "transition visible") {
+                    $(card).transition('fade down');
+                }
+            }
+            function closeC() {
+                var card = document.getElementById("cardContent");
+                $(card).transition('fade down');
+            }
+            $(function () {
+                $(".arq").click(function (e) {
+                    var caminho = e.target.children[0].id;
+                    console.debug(e.target.children[0].id);
+
+                    console.log(caminho);
+
+                    window.open("../uploads/" + caminho);
+                });
+            });
+
+            function carregou() {
+                document.getElementById("enviarArquivos").disabled = false;
+            {#alert("Arquivo pronto, clique no botão carregar");#}
+                }
+            {# $("form#sendFiles").submit(function () {
+
+                 var formData = new FormData($(this)[0]);
+
+                 $.ajax({
+                     url: '{{web_dir}}uploadGeral',
+                     type: 'POST',
+                     data: formData,
+                     async: false,
+                     success: function (data) {
+                         alert(data)
+                     },
+                     cache: false,
+                     contentType: false,
+                     processData: false
+                 });
+
+                 return false;
+             });
+ #}
+
+        </script>
+        <style>
+            @import 'https://fonts.googleapis.com/css?family=Roboto:100,400';
+            *{
+                font-family: 'Roboto', sans-serif;
+                font-weight: 100;
+            }
+            h2{
+                position: absolute;
+                top: 5%;
+                left: 15%;
+                color:#666666;
+                font-family: 'Roboto', sans-serif;
+                font-weight: 100;
+            }
+            #divisor{
+                border-bottom: 1px solid #666666;
+                width: 500px;
+                position: absolute;
+                top: 12%;
+                left: 15%;
+            }
+            .arquivos{
+                position: absolute;
+                top: 15%;
+                left: 15%;
+                width: 70%;
+                height: 75%;
+                overflow-y: auto;
+            }
+            .arq{
+                width: 10%;
+                height: 0;
+                padding-bottom: 10%;
+                margin: 3%;
+                margin-left: 1%;
+                margin-bottom: 4%;
+                float: left;
+                position: relative;
+                -webkit-border-radius:50%;
+                -moz-border-radius:50%;
+                border-radius: 50%;
+                text-align: center;
+                cursor: pointer;
+            }
+            .arqAdd{
+                width: 10%;
+                height: 0;
+                padding-bottom: 10%;
+                margin: 3%;
+                margin-left: 1%;
+                margin-bottom: 4%;
+                float: left;
+                position: relative;
+                -webkit-border-radius:50%;
+                -moz-border-radius:50%;
+                border-radius: 50%;
+                text-align: center;
+                cursor: pointer;
+            }
+            .arq span{
+                display: inline-block;
+                margin-top: 105%;
+                color: #666666;
+            }
+            .arq span p{
+                color: #666666;
+                padding-bottom: 5%;
+            }
+            .arqAdd span{
+                display: inline-block;
+                margin-top: 105%;
+                color: #666666;
+            }
+            .arqAdd span p{
+                color: #666666;
+                padding-bottom: 5%;
+            }
+            #imagem{
+                background-image: url("/webfolio/assets/assetsAluno/imagemAnexo.png");
+                background-size: 104% 102%;
+            }
+            #doc{
+                background-image: url("/webfolio/assets/assetsAluno/ExportaçãoAluno-02.png");
+                background-size: 103% 103%;
+            }
+            #audio{
+                background-image: url("/webfolio/assets/assetsAluno/ExportaçãoAluno-03.png");
+                background-size: 103% 103%;
+            }
+            #add{
+                background-image: url("/webfolio/assets/assetsAluno/ExportaçãoAluno-05.png");
+                background-size: 103% 103%;
+            }
+            #video{
+                background-image: url("/webfolio/assets/assetsAluno/videoPlay.png");
+                background-size: 103% 103%;
+            }
+            #cardContent{
+                position: absolute;
+                top:50%;
+                left: 50%;
+                width: 450px;
+                height: 450px;
+                margin-top:-225px;
+                margin-left: -225px;
+                background-color: white;
+                visibility: hidden;
+                box-shadow: 0 10px 20px rgba(0,0,0,0.15), 0 10px 12px rgba(0,0,0,0.15);
+                z-index:99;
+                overflow-y: auto;
+            }
+            input[type='file'] {
+                display: none
+            }
+            label.video, label.imagem, label.doc {
+                width: 30%;
+                height: 30%;
+                margin: 10%;
+                margin-bottom: 2%;
+                margin-top: 5%;
+                float: left;
+                -webkit-border-radius:50%;
+                -moz-border-radius:50%;
+                border-radius: 50%;
+                cursor: pointer;
+                background-size: 103% 103%;
+            }
+            label.video{
+                background-image: url("/webfolio/assets/assetsAluno/videoPlay.png");
+            }
+            label.imagem{
+                background-image: url("/webfolio/assets/assetsAluno/imagemAnexo.png");
+                background-size: 104% 102%;
+                margin-top:2%;
+            }
+            label.doc{
+                background-image: url("/webfolio/assets/assetsAluno/ExportaçãoAluno-02.png");
+            }
+
+            #legendaVideo{
+                position: relative;
+                top:170px;
+                left: -130px;
+            }
+            #legendaImagem{
+                position: relative;
+                top:170px;
+                left: 50px;
+            }
+            #legendaDoc{
+                position: relative;
+                top:340px;
+                left: -240px;
+            }
+            #legendaVideo p{
+                color: #666666;
+            }
+            #cancelar{
+                position: relative;
+                top: 180px;
+                left: -30%;
+                background-color: #70e7d0;
+                border-radius: 0px;
+                color: #808080;
+            }
+            #enviarArquivos{
+                position: relative;
+                top: 230px;
+                left: 5%;
+                background-color: #70e7d0;
+                border-radius: 0px;
+                color: #808080;
+            }
+        </style>
+    </head>
+
+    <body>
+        {{ include('menuLateralMin.html.twig') }}
+        <div id="cardContent">
+            <form id='sendFiles' action="{{web_dir}}uploadGeral" method="post" enctype="multipart/form-data">
+                <label for='videoFile' class="video"></label>
+                <input type='file' name='video' id="videoFile"  onChange="carregou();" accept="video/mp4,video/avi" >
+                <span id="legendaVideo">Vídeo</span>
+
+                <label for='imagemFile' class="imagem"></label>
+                <input type='file' name='imagem' id="imagemFile" onChange="carregou();" accept="image/png, image/jpeg, image/jpg, image/gif">
+                <span id="legendaImagem">Imagem</span>
+
+                <label for='docFile' class="doc"></label>
+                <input type='file' name='arquivo' id="docFile" onChange="carregou();" accept="text/plain, application/pdf">
+                <span id="legendaDoc">Documento</span>
+
+                <button type="submit" class="ui button" id="enviarArquivos" disabled data-tooltip="Arquivo pronto, clique aqui para carregar" data-position="top center">CARREGAR</button>
+            </form>
+
+            <div id="cancelar" class="ui button" onClick="closeC();">CANCELAR</div>
+
+        </div>
+        <h2>Arquivos</h2><div id="divisor"></div>
+        <div class="arquivos">
+            {%if anexos|length==0%}
+                 <span>Nenhum anexo para exibir</span>
+            {%endif%}
+         
+            {% for  anexosByArray in  anexos %}  
+                 {% for  an in  anexosByArray %}  
+                {%if (an.tpAttachment)=='V' %}
+                    <div class="arq" id="video" >
+                        <span id="{{an.nmSystem}}">
+                            {%if an.nmFile|length < 15 %}
+                                {{ an.nmFile }}
+                            {%else%}
+                                {{ an.nmFile[0:15] }}<br>{{ an.nmFile [15:30] }}
+                            {%endif%}
+                        </span>
+                    </div>
+                {% elseif (an.tpAttachment)=='I'%}
+                    <div class="arq" id="imagem">
+                        <span id="{{an.nmSystem}}">
+                            {%if an.nmFile|length < 15 %}
+                                {{ an.nmFile }}
+                            {%else%}
+                                {{ an.nmFile[0:15] }}<br>{{ an.nmFile [15:30] }}
+                            {%endif%}
+                        </span>
+                    </div>
+                {% elseif (an.tpAttachment)=='T'%}
+                    <div class="arq" id="doc">
+                        <span id="{{an.nmSystem}}">
+                            {%if an.nmFile|length < 15 %}
+                                {{ an.nmFile }}
+                            {%else%}
+                                {{ an.nmFile[0:15] }}<br>{{ an.nmFile [15:30] }}
+                            {%endif%}
+                        </span>
+                    </div>
+                {%endif%}
+                 {%endfor%}
+            {%endfor%}
+
+            {%if flagVisitante==false %}
+                <div class="arqAdd" id="add" onClick="addFile();"><span >Adicionar novo</span></div>
+            {%endif%}
+        </div>
+    </body>
+</html>

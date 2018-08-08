@@ -1,0 +1,113 @@
+{# empty Twig template #}
+
+<script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.12.2.min.js"></script>
+<script src="https://www.gstatic.com/firebasejs/3.5.1/firebase.js"></script>
+<script>
+    // Initialize Firebase
+    var config = {
+        apiKey: "AIzaSyD_OStPHBrcmrN1VAfHqAsqGCgM85QDnGY",
+        authDomain: "folio-f0a6f.firebaseapp.com",
+        databaseURL: "https://folio-f0a6f.firebaseio.com",
+        storageBucket: "folio-f0a6f.appspot.com",
+        messagingSenderId: "6428829419"
+    };
+    var mainApp = firebase.initializeApp(config);
+
+
+    var title = "titulo";
+    var descr = "descrevendo";
+    var nu = 1;
+
+    // var childRef = mainApp.child("tb_portfolio");
+    var newPortfolioRef = mainApp.database().ref("portfolio/").push();
+    newPortfolioRef.set({
+        ds_title: title,
+        ds_description: descr,
+        nu_portfolio_version: nu
+    });
+
+    var newClass = mainApp.database().ref("class/").push();
+
+    console.log(newClass.key);
+
+    newClass.set({
+        id_proposer: 1,
+        ds_code: "T1",
+        ds_description: "Turma 1",
+        st_status: "2016-10-21",
+        dt_start: "2016-10-21",
+        dt_finish: "2016-10-21"
+    });
+
+    var newPortClassRef = mainApp.database().ref("portfolio_class/").push();
+
+    newPortClassRef.set({
+        id_class: newClass.key,
+        id_portfolio: newPortfolioRef.key,
+    });
+
+    var newUserAluno = mainApp.database().ref("user/").push();
+
+    newUserAluno.set({
+        nm_user: "marilia",
+        nu_identification: 3243,
+        ds_email: "marilia@port.com",
+        ds_password: "folio",
+        nu_cellphone: "5198989898",
+        fl_admin: "N",
+        fl_proposer: "N",
+        im_photo: null
+    });
+
+    var newUserTutor = mainApp.database().ref("user/").push();
+
+    newUserTutor.set({
+        nm_user: "gabriel",
+        nu_identification: 1231,
+        ds_email: "gabriel@port.com",
+        ds_password: "folio",
+        nu_cellphone: "5198989898",
+        fl_admin: "N",
+        fl_proposer: "N",
+        im_photo: null
+    });
+
+    var newPortfolioStudent = mainApp.database().ref("portfolio_student/").push();
+    newPortfolioStudent.set({
+        id_portfolio_class: newPortClassRef.key,
+        id_student: newUserAluno.key,
+        id_tutor: newUserTutor.key,
+        dt_first_sync: "2016-10-10",
+        nu_portfolio_version: 1
+    });
+
+    var newActivity = mainApp.database().ref("activity/").push();
+
+    newActivity.set({
+        id_portfolio: newPortfolioRef.key,
+        nu_order: 1,
+        ds_title: "atividade teste",
+        ds_description: "aqui no firebase atividade teste"
+    });
+
+    var newActivityStudent = mainApp.database().ref("activityStudent/").push();
+
+    newActivityStudent.set({
+        id_portfolio_student: newPortfolioStudent.key,
+        id_activity: newActivity.key,
+        dt_conclusion: "2016-5-10",
+        dt_first_sync: null
+    });
+
+    var newVersionActivity = mainApp.database().ref("versionActivity/").push();
+
+    newVersionActivity.set({
+        id_activity_student: newActivityStudent.key,
+        tx_activity: "texto aqui",
+        dt_last_access: "2016-5-10",
+        dt_verification: "2016-10-10"
+    });
+
+
+
+</script>

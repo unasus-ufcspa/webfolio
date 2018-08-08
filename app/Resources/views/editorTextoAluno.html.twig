@@ -1,0 +1,760 @@
+<html>
+  <head>
+    <title>Atividade</title>
+    <link rel="stylesheet" type="text/css" href="/webfolio/semantic/dist/semantic.min.css">
+    <link rel="stylesheet" type="text/css" href="/webfolio/assets/css/sidebarComentarios.css">
+    <link rel="stylesheet" type="text/css" href="/webfolio/assets/css/editorAluno.css">
+
+    <script type="text/javascript"  src="/webfolio/tinymce/js/tinymce/tinymce.min.js"></script>
+    <script src="/webfolio/node_modules/semantic-ui/node_modules/jquery/dist/jquery.min.js"></script>
+    <script src="/webfolio/semantic/dist/components/visibility.js"></script>
+    <script src="/webfolio/semantic/dist/components/sidebar.js"></script>
+    <script src="/webfolio/semantic/dist/components/dropdown.min.js"></script>
+    <script type="text/javascript"  src="/webfolio/assets/js/editorAluno.js"></script>
+    <script src="/webfolio/semantic/dist/components/modal.js"></script>
+    <script src="/webfolio/semantic/dist/components/form.js"></script>
+    <script src="/webfolio/semantic/dist/components/transition.js"></script>
+
+    <script src="/webfolio/semantic/dist/components/dimmer.js"></script>
+    {% block javascripts %}
+        <script src="{{ asset('/assets/js/editorAluno.js') }}"></script>
+    {% endblock %}
+    <script type="text/javascript">
+
+    var arrayArrays = [];
+    var contArraysMult = 0;
+    setInterval(function () {
+      carregaComGeral({{ app.session.get('atividadeAtual') }}, {{ app.session.get('idUser') }}, "{{web_dir}}");
+    }, 5000);
+
+    function updateVersAtual(){
+      var atividade = {{ app.session.get('atividadeAtual') }} ;
+      var htmlAtualizado = removeSrc("{{web_dir}}");
+      var dataString = 'atividade=' + atividade + '&texto=' + escape(htmlAtualizado);
+      $.ajax({
+        type: "POST",
+        url: "{{web_dir}}updateVersaoAtual",
+        data: dataString,
+        success: function () {},
+        error: function (jqXHR, textStatus, errorThrown) {
+          alert(textStatus + ": Sua versão não está sendo salva!");
+        }
+      });
+    }
+
+    function finalizaAtividade() {
+      salvaVersao(true);
+      $('.ui.basic.modal').modal({
+          closable: false,
+          onDeny: function () {
+      }, onApprove: function () {
+          var idActivityDescAberta = {{ app.session.get('atividadeAtual') }};
+          var dataString = 'idActivityStudent=' + idActivityDescAberta;
+          $.ajax({
+            type: "POST",
+            url: "{{web_dir}}finalizaAtividadeWeb",
+            data: dataString,
+            success: function () {
+              console.log("Finalizada!");
+              alert("Atividade finalizada com sucesso");
+              location.reload();
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+              alert(textStatus + ": Não foi possivel finalizar essa atividade!");
+            }
+          });
+        }
+      }).modal('show');
+    }
+
+    {% if dt_conclusion is empty %}
+      if ({{ app.session.get('versaoAtual') }} == {{ app.session.get('versaoAtualEditavel') }}){
+        setInterval(function () {
+        updateVersAtual();
+        }, 10000);
+      }
+      tinymce.init({
+        selector: "textarea",
+        width: 1000,
+        height: 700,
+        theme: 'modern',
+        skin: 'light',
+        statusbar: false,
+        language: 'pt_BR',
+        menubar: false,
+        toolbar: true,
+        plugins: [
+          "advlist autolink lists link image charmap print preview anchor",
+          "searchreplace visualblocks code fullscreen",
+          "insertdatetime media table contextmenu paste", "pluginImage", , "toolbarplugin", "autoresize", "media", "wordcount"
+        ],
+        file_browser_callback: "openmanager",
+        autoresize_min_height: 650,
+        open_manager_upload_path: '/webfolio/web/uploads/',
+        content_style: "@import url(https://fonts.googleapis.com/css?family=Lato); .mce-content-body{font-family:Lato!important;font-size:15px;color:#808080; -webkit-margin-before: 1em; -webkit-margin-after: 1em; word-wrap:break-word;}",
+        toolbar: "insertfile undo redo | bold italic | alignleft aligncenter alignright alignjustify fontsizeselect | bullist numlist | pluginImage | toolbarplugin",
+        fontsize_formats: "8px 10px 12px 14px 18px 24px 36px",
+        contextmenu: "bold italic",
+        relative_urls: false,
+        remove_script_host: false,
+        convert_urls: false,
+        //  extended_valid_elements : "video[*]",
+        media_strict: false,
+        valid_elements: "*[*]",
+        setup: function (ed) {
+          ed.on('Click', function (e) {
+            if (e.target.nodeName.toLowerCase() == 'img') {
+              if (e.target.className == "mce-object mce-object-video") {
+                if (e.target.dataset.mcePSrc != null){
+                  var srcOriginal = e.target.dataset.mcePSrc;
+                  window.open(srcOriginal);
+                }else{
+                  var srcOriginal = e.target.src;
+                  var nomeVideo = srcOriginal.substr(0, srcOriginal.lastIndexOf('.'));
+                  var nomeImagem = ("" + nomeVideo + ".mp4");
+                  window.open(nomeImagem);
+                }
+              }
+            }
+          });
+          ed.on('init', function (e) {
+            if ({{ app.session.get('versaoAtual') }} != {{ app.session.get('versaoAtualEditavel') }}){
+              tinyMCE.activeEditor.getBody().setAttribute('contenteditable', false);
+              $(function () {
+                $("div.mce-toolbar").hide();
+              });
+            }else{
+              removeComentarios();
+            }
+            procuraBolinha();
+            switchComentarios();
+            readNoticeActivity({{ app.session.get('atividadeAtual') }}, "{{web_dir}}");
+            addSrc();
+            addTagImg();
+          });
+        }
+      });
+    {% else %}
+      tinymce.init({
+        selector: "textarea",
+        width: 1000,
+        height: 700,
+        theme: 'modern',
+        skin: 'light',
+        statusbar: false,
+        language: 'pt_BR',
+        toolbar: false,
+        menubar: false,
+        plugins: [
+          "advlist autolink lists link image charmap print preview anchor",
+          "searchreplace visualblocks code fullscreen",
+          "insertdatetime media table contextmenu paste ", "toolbarplugin", "pluginImage", "autoresize", "media", "wordcount"
+        ],
+        file_browser_callback: "openmanager",
+        autoresize_min_height: 650,
+        open_manager_upload_path: '/webfolio/web/uploads/',
+        content_style: "@import url(https://fonts.googleapis.com/css?family=Lato); .mce-content-body{font-family:Lato!important;font-size:15px;color:#808080; -webkit-margin-before: 1em; -webkit-margin-after: 1em; word-wrap:break-word;}",
+        {# toolbar: "insertfile undo redo | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | jbimages | toolbarplugin",#}
+        relative_urls: false,
+        remove_script_host: false,
+        convert_urls: false,
+        extended_valid_elements : "video[*]",
+        media_strict: false,
+        valid_elements: "*[*]",
+        setup: function (ed) {
+          ed.on('Click', function (e) {
+            if (e.target.nodeName.toLowerCase() == 'img') {
+              console.debug(e);
+              if (e.target.className == "mce-object mce-object-video") {
+                if (e.target.dataset.mcePSrc != null){
+                  var srcOriginal = e.target.dataset.mcePSrc;
+                  window.open(srcOriginal);
+                }else{
+                  var srcOriginal = e.target.src;
+                  var nomeVideo = srcOriginal.substr(0, srcOriginal.lastIndexOf('.'));
+                  var nomeImagem = ("" + nomeVideo + ".mp4");
+                  window.open(nomeImagem);
+                }
+              }
+            }
+          });
+          ed.on('init', function (e) {
+            if ({{ app.session.get('versaoAtual') }} != {{ app.session.get('versaoAtualEditavel') }}){
+              tinyMCE.activeEditor.getBody().setAttribute('contenteditable', false);
+            }else{
+              removeComentarios();
+            }
+            procuraBolinha();
+            switchComentarios();
+            readNoticeActivity({{ app.session.get('atividadeAtual') }}, "{{web_dir}}");
+            addSrc();
+            addTagImg();
+          });
+        }
+      });
+    {% endif %}
+
+    var arrayIdLastComment = [];
+    var ultimoComentario = 0;
+    var ultimaObserv = 0;
+    var numComVersion ={{numComActivity+1}} ;
+
+    $(function () { //funcao que adiciona comentario geral com anexo
+      $('#anexoCom').change(function (event) {
+        formData = new FormData();
+        formData.append('anexoCom', event.target.files[0]); // para apenas 1 arquivo
+
+        var comentario = '';
+        var idActivityStudent =      {{ app.session.get('atividadeAtual') }} ;
+        formData.append('comentario', comentario);
+        formData.append('idActivityStudent', idActivityStudent);
+        console.debug(formData);
+        $.ajax({
+            type: "POST",
+            url: "{{web_dir}}addComGeral",
+            data: formData,
+            cache: false,
+            contentType: false,
+            processData: false,
+            async: false,
+            success: function (resp) {
+              console.debug(resp);
+              var lastIdsrv = parseInt(resp.id_comment_srv);
+              ultimoComentario = lastIdsrv;
+              var novaData = formataData(resp.dt_send.date);
+              var divDatas = document.getElementsByClassName("dataConversaGeral");
+              var flagData = true;
+              for (var g = 0; g < divDatas.length; g++){
+                if (divDatas[g].textContent === novaData){
+                  flagData = false;
+                }
+              }
+              if (flagData == true){
+                $(".comentarioGeral").append("<div class='dataConversaGeral'>" + novaData + "</div>");
+              }
+              var horaMinuto = resp.hora.split(":");
+              var novoHorario = horaMinuto[0] + ":" + horaMinuto[1];
+              $(".comentarioGeral").append("<div class='caixaComentarioAnexo' id='commentGeral" + lastIdsrv + "'><img src='/webfolio/assets/anexoImagem.png' id='anexoCaixa'/><a target='_blank' href='/webfolio/uploads/" + resp.anexo + "'>" + resp.nomeFile + "</a> <div class='horarioConversaUsuario'>" + novoHorario + "</div></div><div class='setaConversaUsuario'></div>");
+              // ultimoComentario = resp[i].id_comment;
+              //carregaComGeral();
+            }
+        });
+        document.getElementById('form_txComment').value = '';
+        return false;
+      });
+    });
+
+    $(function () {//funcao que adiciona comentario geral
+      $("#submitGeral").click(function () {
+        var comentario = $("input#form_txComment").val();
+        var idActivityStudent =      {{ app.session.get('atividadeAtual') }} ;
+        formData = new FormData();
+        formData.append('comentario', comentario);
+        formData.append('idActivityStudent', idActivityStudent);
+        console.debug(formData);
+        $.ajax({
+            type: "POST",
+            url: "{{web_dir}}addComGeral",
+            data: formData,
+            cache: false,
+            contentType: false,
+            processData: false,
+            async: false,
+            success: function (resp) {
+              {#  console.debug(resp);
+              var lastIdsrv = parseInt(resp.id_comment_srv);
+              ultimoComentario = lastIdsrv;#}
+              var novaData = formataData(resp.dt_send.date);
+              var divDatas = document.getElementsByClassName("dataConversaGeral");
+              var flagData = true;
+              for (var g = 0; g < divDatas.length; g++){
+                if (divDatas[g].textContent === novaData){
+                  flagData = false;
+                }
+              }
+              if (flagData == true){
+                $(".comentarioGeral").append("<div class='dataConversaGeral'>" + novaData + "</div>");
+              }
+              var horaMinuto = resp.hora.split(":");
+              var novoHorario = horaMinuto[0] + ":" + horaMinuto[1];
+              $(".comentarioGeral").append("<div class='caixaComentarioGeral' id='commentGeral" + lastIdsrv + "'>" + comentario + "<div class='horarioConversaUsuario'>" + novoHorario + "</div></div>");
+              // ultimoComentario = resp[i].id_comment;
+              //carregaComGeral();
+            }
+        });
+        document.getElementById('form_txComment').value = '';
+        return false;
+      });
+    });
+
+    function salvaVersao(finaliza) {
+      var atividade = {{ app.session.get('atividadeAtual') }} ;
+      var htmlAtualizado = removeSrc("{{web_dir}}");
+      verificaMidias("{{web_dir}}");
+      habilitarComentarios();
+      var dataString = 'atividade=' + atividade + '&texto=' + escape(htmlAtualizado);
+      if (!finaliza){
+        if (!confirm('Você tem certeza que deseja enviar essa versão da atividade?')) {
+          return false;
+        }
+      }
+      $.ajax({
+          type: "POST",
+          url: "{{web_dir}}salvarVersao",
+          data: dataString,
+          success: function (resp) {
+            if (!finaliza){
+              alert("Versão salva com sucesso!");
+            }
+            carregaMenuVersoes(atividade);
+          },
+          error: function (jqXHR, textStatus, errorThrown) {
+            alert(textStatus + ": Sua versão não foi salva!");
+          }
+      });
+    }
+
+    $(function () {
+      $("#submitObservacao.ui.button").click(function () {
+
+      if ($("input#form_txComment.teste").val() == ''){
+        alert("Digite algum comentário");
+      }else{
+        var comentario = $("input#form_txComment.teste").val();
+        var idActivityStudent =                                     {{ app.session.get('atividadeAtual') }} ;
+        var idVersionActivity = {{ app.session.get('versaoAtual') }};
+        var editRef = $("div#referenciaEspec").text();
+        editRef = editRef.substring(12, editRef.length);
+        var txReference = editRef;
+        var txActivity = tinymce.activeEditor.getContent({format: 'html'});
+        txActivityNEW = txActivity.replace(/\"/g, "'");
+        var teste = {
+          "comentario": comentario,
+          "idActivityStudent": idActivityStudent,
+          "idVersionActivity": idVersionActivity,
+          "txReference": txReference,
+          "txActivity": txActivityNEW,
+          "bolinhaAberta": bolinhaAberta
+        };
+
+        $.ajax({
+            type: 'post',
+            data: JSON.stringify(teste),
+            contentType: 'application/json',
+            dataType: 'json',
+            url: "{{web_dir}}addComEspecif",
+            success: function (respE) {
+              var num = respE.last_num_com_srv;
+              numComVersion = num + 1;
+              var novaData = formataData(respE.dt_send.date);
+              var divDatas = document.getElementsByClassName("dataConversa");
+              var flagData = true;
+              for (var g = 0; g < divDatas.length; g++){
+                if (divDatas[g].textContent === novaData){
+                  flagData = false;
+                }
+              }
+              if (flagData == true){
+                $("#" + respE.last_num_com_srv + ".caixaComentEsp").append("<div class='dataConversa'>" + novaData + "</div>");
+              }
+              var horaMinuto = respE.hora.split(":");
+              var novoHorario = horaMinuto[0] + ":" + horaMinuto[1];
+              var caminho = $("#" + respE.last_num_com_srv + ".caixaComentEsp").append("<div class='caixaComentario' id=" + respE.last_num_com_srv + "> " + comentario + "<div class='horarioConversaUsuario'>" + novoHorario + "</div></div><div class='setaConversaUsuarioEspecifico'></div>");
+              abriu = 0;
+              comentou = 0;
+            },
+            error:function (e) {
+              alert("Ocorreu algum erro!");
+            }
+        });
+        $("input#form_txComment.teste").val('');
+        }
+        return false;
+      });
+    });
+
+    function abre(id) {
+      if (id !== undefined){
+        $(".caixaComentario").remove();
+        $(".caixaComentarioUsuario").remove();
+        if (document.getElementById("referenciaEspec")){
+          document.getElementById("referenciaEspec").style.visibility = "visible";
+          var bolinha = document.getElementsByClassName("bolinhaLateral");
+          if (bolinha.length > 0){
+            bolinha[0].innerHTML = "<p>" + id + "</p>";
+          }
+          $("input#tab1").removeAttr('checked');
+          $("input#tab2")[0].checked = true;
+        }
+      }
+      bolinhaAberta = id;
+      var referencia = document.getElementById("referenciaEspec"); //ainda nao tem esse coisa aqui
+      var span = tinyMCE.activeEditor.dom.select('span#' + id)[0];
+      if (span != null && referencia != null) {
+        referencia.textContent = "Referência: " + (span.innerHTML);
+      }
+      var versaoAtual ={{ app.session.get('versaoAtual') }}
+      if (versaoAtual > 0) {
+        carregaObservacaoAll();
+      }
+    }
+
+    function carregaObservacaoAll() {
+      var versaoAtual ={{ app.session.get('versaoAtual') }} ;
+      arrayIdLastComment[bolinhaAberta] = (ultimaObserv);
+      if (bolinhaAberta > 0){
+        var dataString = {
+          "numComVersion": bolinhaAberta,
+          "idVersionActivity": versaoAtual,
+          "ultimaObserv":0
+        };
+        $(function () {
+          $.ajax({
+              type: 'post',
+              data: JSON.stringify(dataString),
+              contentType: 'application/json',
+              dataType: 'json',
+              url: "{{web_dir}}getObservacoesView",
+              success: function (respC) {
+                if (respC.length > 0){
+                  $('.dataConversa').remove();
+                  $('.setaConversaEspecifico', '.comentarioEspec').remove();
+                  $('.setaConversaUsuarioEspecifico', '.comentarioEspec').remove();
+                  for (var i = 0; i < respC.length; i++) {
+                    console.log("{{ app.session.get('idUser') }}");
+                    var dataSplit = respC[i].data.split("-");
+                    var novaData = dataSplit[2] + "/" + dataSplit[1] + "/" + dataSplit[0];
+                    var divDatas = document.getElementsByClassName("dataConversa");
+                    var flagData = true;
+                    for (var g = 0; g < divDatas.length; g++){
+                      if (divDatas[g].id == respC[i].data){
+                        flagData = false;
+                      }
+                    }
+
+                    var horaMinuto = respC[i].hora.split(":");
+                    var novoHorario = horaMinuto[0] + ":" + horaMinuto[1];
+                    if (flagData == true){
+                      $("#" + bolinhaAberta + ".caixaComentEsp").append("<div class='dataConversa' id='" + respC[i].data + "'>" + novaData + "</div"); //provisorio, só pra mostrar a data
+                    }
+                    if(respC[i].idAuthor != {{ app.session.get('idUser') }}){
+                      $("#" + bolinhaAberta + ".caixaComentEsp").append("<div class='caixaComentarioUsuario' id=" + bolinhaAberta + ">"+ respC[i].nmUser+": " + respC[i].txComment + "<div class='horarioConversa'>" + novoHorario + "</div></div><div class='setaConversaEspecifico'></div>");
+                    }else{
+                      $("#" + bolinhaAberta + ".caixaComentEsp").append("<div class='caixaComentario' id=" + bolinhaAberta + ">" + respC[i].txComment + "<div class='horarioConversaUsuario'>" + novoHorario + "</div></div><div class='setaConversaUsuarioEspecifico'></div>");
+                    }
+                    ultimaObserv = respC[i].id_comment;
+                  }
+                  arrayIdLastComment[bolinhaAberta] = (ultimaObserv);
+                }
+                $(function () {
+                  $('.wide.sidebar.teal').sidebar('toggle');
+                });
+                $("div#" + bolinhaAberta + ".caixaComentario").on('ready', function(){
+                  intervalCarregaNew = setInterval(carregaObservacaoNew, 5000);
+                });
+              }
+          });
+        });
+      }
+    }
+
+    function carregaObservacaoNew() {
+      var versaoAtual ={{ app.session.get('versaoAtual') }} ;
+      arrayIdLastComment[bolinhaAberta] = (ultimaObserv);
+      if ($(".ui.vertical right wide sidebar teal menu uncover visible").length > 0){
+        if (bolinhaAberta > 0){
+          var dataString = 'numComVersion=' + bolinhaAberta + '&idVersionActivity=' + versaoAtual + '&ultimaObserv=' + arrayIdLastComment[bolinhaAberta];
+          $.ajax({
+              type: "POST",
+              url: "{{web_dir}}getObservacoesView",
+              data: dataString,
+              success: function (resp) {
+                if (resp.length > 0){
+                  for (var i = 0; i < resp.length; i++) {
+                    for (data in resp[i]){
+                      var dataSplit = data.split("-");
+                      var novaData = dataSplit[2] + "/" + dataSplit[1] + "/" + dataSplit[0];
+                      $("#" + bolinhaAberta + ".caixaComentEsp").append("<div class='dataConversa' id='" + data + "'>" + novaData + "</div>"); // provisorio, só pra mostrar a data
+                      if (resp[i][data].idAuthor != {{ app.session.get('idUser') }}){
+                        $("#" + bolinhaAberta + ".caixaComentEsp").append("<div class='caixaComentarioUsuario' id=" + bolinhaAberta + ">" + resp[i][data].nmUser +": "+ resp[i][data].txComment + "</div>");
+                      } else{
+                        $("#" + bolinhaAberta + ".caixaComentEsp").append("<div class='caixaComentario' id=" + bolinhaAberta + ">" + resp[i][data].txComment + "</div>");
+                      }
+                      ultimaObserv = resp[i][data].id_comment;
+                    }
+                  }
+                  arrayIdLastComment[bolinhaAberta] = (ultimaObserv);
+                }
+              }
+          });
+        }
+      }else{
+        clearInterval(intervalCarregaNew);
+        bolinhaAberta = 0;
+      }
+    }
+
+    function  carregaMenuVersoes(idActivityStudent){
+      var dataString = 'atividade=' + idActivityStudent;
+      $(function () {
+        $.ajax({
+            type: "POST",
+            url: "{{web_dir}}carregaMenuVersoes",
+            data: dataString,
+            success: function () {}
+        });
+      });
+    }
+
+    var flagSwitch = true;
+
+    function switchComentarios(){
+      var check = document.getElementById('ativarComentarios');
+      if (check.checked == true){
+        desabilitarComentarios();
+      }else{
+        habilitarComentarios();
+        if (flagSwitch){
+          check.checked = true;
+          flagSwitch = false;
+        }
+      }
+    }
+
+    function desabilitarComentarios(){
+      var bolinhasMult = document.getElementsByClassName('bolinhaMult');
+      for (i = 0; i < bolinhasMult.length; i++){
+        fecharBolinha(bolinhasMult[i].id);
+        bolinhasMult[i].style.visibility = "hidden";
+      }
+      var bolinhas = document.getElementsByClassName('bolinha');
+      for (var i = 0; i < bolinhas.length; i++){
+        bolinhas[i].style.visibility = "hidden";
+      }
+
+      ed = tinyMCE.activeEditor;
+      var span = tinyMCE.activeEditor.dom.select('span');
+      for (var j = 0; j < span.length; j++) {
+        if (span[j].className == "bolinhaFolio"){
+          span[j].style.backgroundColor = "#FFF";
+        }
+      }
+    }
+
+    function habilitarComentarios(){
+      var bolinhas = document.getElementsByClassName('bolinha');
+      for (var i = 0; i < bolinhas.length; i++){
+        bolinhas[i].style.visibility = "visible";
+      }
+      var bolinhasMult = document.getElementsByClassName('bolinhaMult');
+      for (i = 0; i < bolinhasMult.length; i++){
+        fecharBolinha(bolinhasMult[i].id);
+        bolinhasMult[i].style.visibility = "visible";
+      }
+      ed = tinyMCE.activeEditor;
+      var span = tinyMCE.activeEditor.dom.select('span');
+      for (var j = 0; j < span.length; j++) {
+        if (span[j].className == "bolinhaFolio"){
+          span[j].style.backgroundColor = "#70e7d0";
+        }
+      }
+    }
+
+    function formataData(data){
+      var dataFormatada;
+      var dataSplitAno = data.split(" ");
+      var dataSplit = dataSplitAno[0].split("-");
+      dataFormatada = dataSplit[2] + "/" + dataSplit[1] + "/" + dataSplit[0];
+      return dataFormatada;
+    }
+    </script>
+</head>
+
+    <body>
+        <div id="cardContent">
+            <i id="close" class="large checkmark icon" onClick="closeC();"></i>
+            <br>
+            <span id="conteudo"></span>
+        </div>
+        <div class="ui basic modal">
+            <div class="ui icon header">
+                <i class="file text icon"></i>
+            </div>
+            <div class="content">
+                <p>Tem certeza que deseja finalizar essa atividade?</p>
+            </div>
+            <div class="actions">
+                <div class="ui cancel inverted button" id="cancelarFinal">
+                    <i class="remove icon"></i>
+                    Não
+                </div>
+                <div class="ui ok inverted button" id="confirmarFinal">
+                    <i class="checkmark icon"></i>
+                    Sim
+                </div>
+            </div>
+        </div>
+
+        <div class="ui vertical right wide sidebar teal menu">
+            <div class="tab-main">
+                <div class="tabs">
+                    <input type="radio" name="tabs" id="tab1" checked="checked"/>
+                    <label for="tab1" style="padding: 0px;" ><div id="abas1">geral</div></label>
+                    <div class="tab-content" style="padding: 0px">
+
+                        <div class="comentarioGeral" style="overflow-y: scroll;" id="scrollStyle">
+
+                            <div class="ui active centered loader"></div>
+
+                        </div>
+                        <form class="ui large form"  method="post" enctype="multipart/form-data" {{ form_start(form) }}
+                              <div id="footerInput">
+                                <div class="ui fluid input">
+                                    {{form_row(form.txComment, { 'attr' : { 'placeholder' : 'Comente aqui' }})}}
+
+                                    <label for='anexoCom' class="imagem"></label>
+                                    <input type='file' name='imagem' id="anexoCom" class="anexoComentario" onChange=''>
+                                    <button  id="submitGeral" type="submit"></button>
+                                </div>
+                            </div>
+                            {{form_row(form.save, {'attr' : { 'class' : 'invisivel' }})}}
+                            {{ form_end(form) }}
+                    </div>
+                    {{form_row(form.save, {'attr' : { 'class' : 'invisivel' }})}}
+                    {{ form_end(form) }}
+                </div>
+            </div>
+
+            <div class="tabs">
+                <input type="radio"  name="tabs" id="tab2" />
+                <label for="tab2" style="padding: 0px;"><div id="abas2">observações</div></label>
+                <div class="tab-content" style="padding: 0px">
+                    <div class="comentarioEspec" style="overflow-y: auto;" id="scrollStyle">
+                        <div id="referenciaEspec" style="visibility: hidden"></div>
+                    </div>
+                    <form class="ui large form" {{ form_start(form2) }}
+                          <div id="footerInput">
+                            <div class="ui fluid input">
+                                {{form_row(form2.txComment, { 'attr' : { 'placeholder' : 'Comente aqui' }})}}
+                                <button class="ui button" id="submitObservacao" type="submit"> </button>
+                            </div>
+                        </div>
+                        {{form_row(form2.save, {'attr' : { 'class' : 'invisivel'}})}}
+                        {{ form_end(form2) }}
+
+                        <form class="ui large form" {{ form_start(form3) }}
+                              {{ form_end(form3) }}
+                              </div>
+                            </div>
+                            </div>
+                            </div>
+
+                            <div class="pusher" style="overflow-y: auto; overflow-y: initial;">
+                                <div id="bolinhas"></div>
+
+                                {% set texto= ""%}
+                                {% set idVersionAtual = 0%}
+                                {{ include('menuSuperiorAluno.html.twig') }}
+                                {{ include('menuLateralMin.html.twig') }}
+                                {%if versaoEscolhida is not empty%}
+                                    {% for v in versaoEscolhida %}
+                                        {% set texto =v.txActivity%}
+                                        {% set idVersionAtual =v.idVersionActivity%}
+                                    {% endfor%}
+                                {%endif%}
+
+                                <div id="editor" >
+                                    <form method="POST" action="{{web_dir}}salvarVersao"  onSubmit="if (!confirm('Você tem certeza que deseja enviar essa versão da atividade?')) {
+                                        return false;
+                                        }">
+
+                                      
+                                        <textarea id="texto" name="texto">
+                                            {{texto}}
+                                        </textarea>
+                                        <input type="hidden" id="atividade" value="{{idActivityStudent}}">
+                                    </form>
+                                    {%if dt_conclusion is empty%}
+                                        <div  class="ui middle aligned  grid" id="botoesAtividade">
+                                          <div class=" five wide column">
+                                            <div class="column">
+                                              <div id="toggle">
+                                                <label class="switch">
+                                                  <input type="checkbox" id="ativarComentarios" check="checked">
+                                                  <div class="slider round" checked="true" onClick="switchComentarios()"></div>
+                                                </label>
+                                              </div>
+                                            </div>
+                                          </div>
+
+                                          <div class="five wide column">
+                                            <img src="/webfolio/assets/enviarVersao.png" width="100" height="100" onClick="salvaVersao(false);" id="botaoSave">
+                                          </div>
+                                          <div class="five wide column">
+                                            <img src="/webfolio/assets/finalizarAtividade.png" width="100" height="100" onClick="finalizaAtividade();" id="botaoFinalizar">
+                                          </div>
+                                        </div>
+                                    {%else%}
+                                       <div  class="ui middle aligned  grid" id="botoesAtividade">
+                                          <div class=" five wide column">
+                                             <div class="column">
+                                                <div id="toggle">
+                                                    <label class="switch">
+                                                        <input type="checkbox" id="ativarComentarios" check="checked">
+                                                        <div class="slider round" checked="true" onClick="switchComentarios()"></div>
+                                                    </label>
+                                                </div>
+                                              </div>
+                                          </div>
+                                       </div>
+                                    {%endif%}
+                                    </form>
+                                </div>
+                                <div id="divNome">
+                                {% for dados in dadosUsuarios %}
+                                  <div id="infoTutor"><h4>{{dados.nome}}</h4></div>
+                                {% endfor %}
+                                </div>
+                                <div id="divFoto">
+                                {% for dados in dadosUsuarios %}
+                                
+                                  {% if dados.foto is empty %}
+                                      <div id="fotoTutor" style="background-size: 100% 102%;"></div>
+                                  {% else %}
+                                      <div id="fotoTutor" style="background-image: url('data:image/jpeg;base64,{{dados.foto}}');"></div>
+                                  {% endif %}
+                                {% endfor %}
+                                </div>
+                                <div id="contador" title="Contagem de Palavras" onclick="contaPalavras();"><img src="/webfolio/assets/Contador.png"></div>
+                                <div class="menucomentarios" title="Conversa" id="menuComentarios" onClick="abreBarra(), carregaComGeral();"><a href="#">&lsaquo;&lsaquo;</a></div>
+
+                                {% if numNotices >0 %}
+                                    <div id="bolinhaLateral">{{numNotices}} </div>
+                                {% endif %}
+                            </div>
+
+  <script>
+      $('.ui.dropdown').dropdown();
+      function contaPalavras(){
+        var theEditor = tinymce.activeEditor;
+        var texto = tinyMCE.activeEditor.getContent({format : 'text'});
+        var nr = texto.split(/[\s,]+/);
+        var wordCount = theEditor.plugins.wordcount.getCount();
+        var card = document.getElementById("cardContent");
+        var desc = document.getElementById("conteudo");
+        var strip = (tinyMCE.activeEditor.getContent()).replace(/(<([^>]+)>)/ig, "");
+        var text = strip.length;
+        var numberOfLineBreaks = (strip.match(/\n/g) || []).length;
+        text = text - numberOfLineBreaks;
+        desc.innerHTML = "<p>Palavras: " + wordCount + "</p><p>Caracteres: " + text;
+        if (card.className !== "transition visible") {
+          $(card).transition('fade down');
+        }
+      }
+
+      function closeC() {
+        var card = document.getElementById("cardContent");
+        $(card).transition('fade down');
+      }
+  </script>
+</html>

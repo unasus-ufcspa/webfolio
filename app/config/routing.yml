@@ -1,0 +1,21 @@
+app:
+    resource: "@AppBundle/Controller/"
+    type:     annotation
+portfolios:
+    path:     /portfolios
+    defaults: { _controller: 'PortfoliosWeb::portfolios' }
+login:
+    path:     /login
+    defaults: { _controller: 'Login::login' }
+/:
+    path:     /
+    defaults: { _controller: 'Login::raiz' }
+carregaAnexos:
+    path:     /carregaAnexos
+    defaults: { _controller: 'AnexosWeb::carregaAnexos' }       
+config:
+    path:     /config
+    defaults: { _controller: 'ConfiguracoesWeb::config' }
+    requirements:
+        _method:  POST
+        

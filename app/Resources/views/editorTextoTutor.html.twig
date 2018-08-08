@@ -1,0 +1,646 @@
+<html>
+    <head>
+        <title>Atividade</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <link rel="stylesheet" type="text/css" href="/webfolio/semantic/dist/semantic.min.css">
+        <link rel="stylesheet" type="text/css" href="/webfolio/assets/css/sidebarComentarios.css">
+        <link rel="stylesheet" type="text/css" href="/webfolio/assets/css/editorTutor.css">
+
+        <script src="/webfolio/node_modules/semantic-ui/node_modules/jquery/dist/jquery.min.js"></script>
+        <script src="/webfolio/semantic/dist/components/form.js"></script>
+        <script src="/webfolio/semantic/dist/components/transition.js"></script>
+        <script type="text/javascript"  src="/webfolio/tinymce/js/tinymce/tinymce.min.js"></script>
+        <script src="/webfolio/semantic/dist/components/visibility.js"></script>
+        <script src="/webfolio/semantic/dist/components/sidebar.js"></script>
+        <script src="/webfolio/semantic/dist/components/dropdown.min.js"></script>
+        <script src="/webfolio/semantic/dist/components/transition.js"></script>
+        <script type="text/javascript"  src="/webfolio/assets/js/editorTutor.js"></script>
+
+        {% block javascripts %}
+            <script src="{{ asset('/assets/js/editorTutor.js') }}"></script>
+        {% endblock %}
+        <script type="text/javascript">
+
+            $(".comentarioGeral").change(function (){
+            $(".comentarioGeral").animate({
+            scrollTop:
+                    $(".comentarioGeral").prop('scrollHeight')}, 1000);
+            });
+            var arrayArrays = [];
+            var abriu = 0;
+            var comentou = 0;
+            var ultimaObserv = 0;
+            var arrayIdLastComment = []; //vetor lista que armazena os ids dos comentarios de cada bolinha carregado pela ultima vez
+            var bolinhaAberta = 0;
+            var numComVersion ={{numComActivity+1}} ;
+            setInterval(function () {
+            carregaComGeral({{ app.session.get('atividadeAtual') }}, {{ app.session.get('idUser') }}, "{{web_dir}}");
+            }, 5000);
+            /////Função de anexo para comentario/////
+            $(function () {
+            $('#anexoCom').change(function (event) {
+            formData = new FormData();
+            formData.append('anexoCom', event.target.files[0]);
+            var comentario = '';
+            var idActivityStudent =      {{ app.session.get('atividadeAtual') }} ;
+            formData.append('comentario', comentario);
+            formData.append('idActivityStudent', idActivityStudent);
+            $.ajax({
+            type: "POST",
+                    url: "{{web_dir}}addComGeral",
+                    data: formData,
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    async: false,
+                    success: function (resp) {
+
+            {#  var lastIdsrv = parseInt(resp.id_comment_srv);
+              ultimoComentario = lastIdsrv;#}
+                          var dataSplitAno = resp.dt_send.date.split(" ");
+                          var dataSplit = dataSplitAno[0].split("-");
+                          var novaData = dataSplit[2] + "/" + dataSplit[1] + "/" + dataSplit[0];
+                          var divDatas = document.getElementsByClassName("dataConversaGeral");
+                          var flagData = true;
+                          for (var g = 0; g < divDatas.length; g++){
+                          if (divDatas[g].textContent === novaData){
+                          flagData = false;
+                          }
+                          }
+                          if (flagData == true){
+                          $(".comentarioGeral").append("<div class='dataConversaGeral'>" + novaData + "</div>");
+                          }
+                          var horaMinuto = resp.hora.split(":");
+                          var novoHorario = horaMinuto[0] + ":" + horaMinuto[1];
+                          $(".comentarioGeral").append("<div class='caixaComentarioAnexo' id='commentGeral" + lastIdsrv + "'><img src='/webfolio/assets/anexoImagem.png' id='anexoCaixa'/><a target='_blank' href='/webfolio/uploads/" + resp.anexo + "'>" + resp.nomeFile + "</a> <div class='horarioConversaUsuario'>" + novoHorario + "</div></div><div class='setaConversaUsuario'></div>");
+                          }
+                  });
+                  document.getElementById('form_txComment').value = '';
+                  return false;
+                  });
+                  });
+                  ////Função de envio de comentário geral///
+                  $(function () {
+                  $("#submitGeral").click(function () {
+                  var comentario = $("input#form_txComment").val();
+                  var idActivityStudent =      {{ app.session.get('atividadeAtual') }} ;
+                  formData = new FormData();
+                  formData.append('comentario', comentario);
+                  formData.append('idActivityStudent', idActivityStudent);
+                  $.ajax({
+                  type: "POST",
+                          url: "{{web_dir}}addComGeral",
+                          data: formData,
+                          cache: false,
+                          contentType: false,
+                          processData: false,
+                          async: false,
+                          success: function (resp) {
+            {# var lastIdsrv = parseInt(resp.id_comment_srv);
+             ultimoComentario = lastIdsrv;#}
+                         var dataSplitAno = resp.dt_send.date.split(" ");
+                         var dataSplit = dataSplitAno[0].split("-");
+                         var novaData = dataSplit[2] + "/" + dataSplit[1] + "/" + dataSplit[0];
+                         var divDatas = document.getElementsByClassName("dataConversaGeral");
+                         var flagData = true;
+                         for (var g = 0; g < divDatas.length; g++){
+                         if (divDatas[g].textContent === novaData){
+                         flagData = false;
+                         }
+                         }
+                         if (flagData == true){
+                         $(".comentarioGeral").append("<div class='dataConversaGeral'>" + novaData + "</div>");
+                         }
+                         var horaMinuto = resp.hora.split(":");
+                         var novoHorario = horaMinuto[0] + ":" + horaMinuto[1];
+                         $(".comentarioGeral").append("<div class='caixaComentarioGeral' id='commentGeral" + lastIdsrv + "'>" + comentario + "<div class='horarioConversaUsuario'>" + novoHorario + "</div></div><div class='setaConversaUsuario'></div>"); //HORARIOCONVERSA
+                         ultimoComentario = resp.id_comment_srv;
+                         }
+                 });
+                 document.getElementById('form_txComment').value = '';
+                 return false;
+                 });
+                 });
+                 //Abre a barra de comentarios especificos com a referencia comentada pelo usuario////
+                 function abreProvisoria(id) {
+                 $('.dataConversa').remove();
+                 document.getElementById("referenciaEspec").style.visibility = "visible";
+                 var referencia = document.getElementById("referenciaEspec");
+                 var divHiddenNumCom = document.getElementById('hidden');
+                 var span = tinyMCE.activeEditor.dom.select('span#' + id)[0];
+                 if (span != null) {
+                 referencia.textContent = "Referência: " + (span.innerHTML);
+                 divHiddenNumCom.textContent = (id);
+                 }
+                 $("input#tab1").removeAttr('checked');
+                 $("input#tab2")[0].checked = true;
+                 $(function () {
+                 $('.wide.sidebar.teal').sidebar('toggle');
+                 });
+                 var hContent = $("#editor").height();
+                 var hWindow = $(window).height();
+                 if (hContent > hWindow) {
+                 document.getElementById("menuComentarios").style.width = 47;
+                 }
+                 var $div = $("div.ui.vertical.right.wide.sidebar.teal.menu");
+                 var observer = new MutationObserver(function (mutations) {
+                 mutations.forEach(function (mutation) {
+                 if (mutation.attributeName === "class") {
+                 var attributeValue = $(mutation.target).prop(mutation.attributeName);
+                 if (attributeValue == "ui vertical right wide sidebar teal menu") {
+                 if ((abriu == 1) && (comentou == 0)) {
+                 var observacaoTemp = tinyMCE.activeEditor.dom.select('span#' + id);
+                 tinyMCE.activeEditor.dom.setAttrib(observacaoTemp, 'style', '');
+                 tinyMCE.activeEditor.dom.remove(tinyMCE.activeEditor.dom.select('span#' + id), " ");
+                 tinyMCE.activeEditor.dom.setAttrib(observacaoTemp, 'id', '');
+                 $("div#temporaria.bolinhaTemporaria").remove();
+                 }
+                 }
+                 }
+                 });
+                 });
+                 observer.observe($div[0], {
+                 attributes: true
+                 });
+                 }
+
+                 //////prepara a barra de comentarios para o novo comentario especifico//////
+                 function provisoria(numComVersion) {
+                 $(".caixaComentario").remove();
+                 $(".caixaComentarioUsuario").remove();
+                 $('.setaConversa', '.comentarioEspec').remove();
+                 $('.setaConversaUsuario', '.comentarioEspec').remove();
+                 abreProvisoria(numComVersion);
+                 bolinhaAberta = numComVersion;
+                 abriu = 1;
+                 }
+                 //Insere  o comentario especifico e altera a bolinha no texto///
+                 $(function () {
+                 $("#submitObservacao.ui.button").click(function () {
+                 if ($("input#form_txComment.teste").val() == ''){
+                 alert("Comentário não pode estar vazio!");
+                 } else{
+
+                 $('.message .close').on('click', function () {
+                 $(this).closest('.message').transition('fade');
+                 });
+                 var comentario = $("input#form_txComment.teste").val();
+                 var idActivityStudent =                   {{ app.session.get('atividadeAtual') }} ;
+                 var idVersionActivity = {{ app.session.get('versaoAtual') }};
+                 var editRef = $("div#referenciaEspec").text();
+                 editRef = editRef.substring(12, editRef.length);
+                 var txReference = editRef;
+                 var txActivity = tinymce.activeEditor.getContent({format: 'html'});
+                 var htmlAtualizado = removeSrc("{{web_dir}}");
+                 var dadosComentarioEspecifico = {
+                 "comentario": comentario,
+                         "idActivityStudent": idActivityStudent,
+                         "idVersionActivity": idVersionActivity,
+                         "txReference": txReference,
+                         "txActivity": htmlAtualizado,
+                         "bolinhaAberta": bolinhaAberta
+                 };
+                 $.ajax({
+                 type: 'post',
+                         data: JSON.stringify(dadosComentarioEspecifico),
+                         contentType: 'application/json',
+                         dataType: 'json',
+                         url: "{{web_dir}}addComEspecif",
+                         success: function (respE) {
+                         if ($("#" + bolinhaAberta + ".caixaComentEsp").length == 0){
+                         var novoDiv = document.createElement("DIV");
+                         var especif = document.getElementsByClassName("comentarioEspec")[0];
+                         novoDiv.setAttribute("id", bolinhaAberta);
+                         novoDiv.setAttribute("class", "caixaComentEsp");
+                         especif.appendChild(novoDiv);
+                         }
+                         comentou = 1;
+                         //procuro a bolinha temporaria e mudo pra bolinha de verdade e mudo o onclick tb
+                         if ((document.getElementById("temporaria")) && (document.getElementById("pTemporario"))){
+                         var bolinhaTemp = document.getElementById("temporaria");
+                         document.getElementById("pTemporario").remove();
+                         var para = document.createElement("p");
+                         var node = document.createTextNode(respE.last_num_com_srv);
+                         para.appendChild(node);
+                         bolinhaTemp.appendChild(para);
+                         bolinhaTemp.id = respE.last_num_com_srv;
+                         bolinhaTemp.className = "bolinha";
+                         ed = tinyMCE.activeEditor;
+                         bolinhaTemp.setAttribute("onClick", "abre(" + respE.last_num_com_srv + ")");
+                         var span = tinyMCE.activeEditor.dom.select('span');
+                         for (var j = 0; j < span.length; j++) {
+                         if (span[j].id == respE.last_num_com_srv) {
+                         position = ed.dom.getPos(span[j]);
+                         bolinhaTemp.style.top = (position.y + 81);
+                         agrupaBolinhas();
+                         }
+                         }
+                         }
+                         ultimaObserv = respE.last_id_comment;
+                         var num = respE.last_num_com_srv;
+                         numComVersion = num + 1;
+                         var dataSplitAno = respE.dt_send.date.split(" ");
+                         var dataSplit = dataSplitAno[0].split("-");
+                         var novaData = dataSplit[2] + "/" + dataSplit[1] + "/" + dataSplit[0];
+                         var divDatas = document.getElementsByClassName("dataConversa");
+                         var flagData = true;
+                         for (var g = 0; g < divDatas.length; g++){
+                         if (divDatas[g].textContent === novaData){
+                         flagData = false;
+                         }
+                         }
+                         if (flagData == true){
+                         $("#" + respE.last_num_com_srv + ".caixaComentEsp").append("<div class='dataConversa'>" + novaData + "</div>");
+                         }
+                         var horaMinuto = respE.hora.split(":");
+                         var novoHorario = horaMinuto[0] + ":" + horaMinuto[1];
+                         console.log(respE);
+                         $("#" + bolinhaAberta + ".caixaComentEsp").append("<div class='caixaComentario' id=" + respE.last_num_com_srv + "> " + comentario + "<div class='horarioConversaUsuario'>" + novoHorario + "</div></div><div class='setaConversaUsuario'></div>");
+                         abriu = 0;
+                         comentou = 0;
+                         },
+                         error: function (jqXHR, textStatus, errorThrown) {
+                         alert("Ocorreu algum erro!");
+                         }
+
+                 });
+                 $("input#form_txComment.teste").val('');
+                 }
+                 return false;
+                 });
+                 });
+///////////INICIAÇÃO DO EDITOR  E SUAS CONFIGURAÇÕES//////////////
+            {%if dt_conclusion is empty and flagVisitante == false %}
+
+                tinymce.init({
+                selector: "textarea",
+                        width: 1000,
+                        height: 700,
+                        theme: 'modern',
+                        skin: 'light',
+                        statusbar: false,
+                        language: 'pt_BR',
+                        force_p_newlines : false,
+                        forced_root_block : "",
+                        file_browser_callback: "openmanager",
+                        autoresize_min_height: 650,
+                        open_manager_upload_path: '/webfolio/web/uploads/',
+                        toolbar: false,
+                        menubar: false,
+                        plugins: [
+                                "searchreplace visualblocks code fullscreen", "autoresize", "wordcount"
+                        ],
+                        content_style: "@import url(https://fonts.googleapis.com/css?family=Lato); .mce-content-body{font-family:Lato!important;font-size:15px;color:#808080; -webkit-margin-before: 1em; -webkit-margin-after: 1em; word-wrap:break-word;}",
+                        relative_urls: false,
+                        remove_script_host: false,
+                        convert_urls: false,
+                        setup: function (ed) {
+                        ed.on('Click', function (e) {
+                        var node = tinyMCE.activeEditor.selection.getContent();
+                        if (node !== '') {
+                        tinyMCE.activeEditor.getBody().setAttribute('contenteditable', false);
+                        if (numComVersion == null){
+                        Observacao({{numComActivity+1}});
+                        } else{
+                        Observacao(numComVersion);
+                        }
+                        }
+                        });
+                        ed.on('keyDown', function (e) {
+                        tinyMCE.activeEditor.getBody().setAttribute('contenteditable', false);
+                        });
+                        ed.on('keyUp', function (e) {
+                        tinyMCE.activeEditor.getBody().setAttribute('contenteditable', true);
+                        });
+                        ed.on('init', function (e) {
+                        readNoticeActivity({{ app.session.get('atividadeAtual') }}, "{{web_dir}}");
+                        procuraBolinha();
+                        sidebarBolinhas();
+                        addSrc();
+                        addTagImg();
+                        });
+                        }
+
+                });
+            {%else%}
+                tinymce.init({
+                selector: "textarea",
+                        width: 1000,
+                        height: 700,
+                        theme: 'modern',
+                        skin: 'light',
+                        statusbar: false,
+                        language: 'pt_BR',
+                        force_p_newlines : false,
+                        forced_root_block : "",
+                        file_browser_callback: "openmanager",
+                        autoresize_min_height: 650,
+                        open_manager_upload_path: '/webfolio/web/uploads/',
+                        toolbar: false,
+                        menubar: false,
+                        plugins: [
+                                "searchreplace visualblocks code fullscreen", "autoresize", "wordcount"
+                        ],
+                        content_style: "@import url(https://fonts.googleapis.com/css?family=Lato); .mce-content-body{font-family:Lato!important;font-size:15px;color:#808080; -webkit-margin-before: 1em; -webkit-margin-after: 1em; word-wrap:break-word;}",
+                        relative_urls: false,
+                        remove_script_host: false,
+                        convert_urls: false,
+                        setup: function (ed) {
+                        ed.on('keyDown', function (e) {
+                        tinyMCE.activeEditor.getBody().setAttribute('contenteditable', false);
+                        });
+                        ed.on('keyUp', function (e) {
+                        tinyMCE.activeEditor.getBody().setAttribute('contenteditable', true);
+                        });
+                        ed.on('init', function (e) {
+                        readNoticeActivity({{ app.session.get('atividadeAtual') }}, "{{web_dir}}");
+                        procuraBolinha();
+                        sidebarBolinhas();
+                        addSrc();
+                        addTagImg();
+                        });
+                        }
+                });
+            {%endif%}
+
+                function abre(id) {
+            {%if flagVisitante == true %}
+                document.getElementById('form_txComment').disabled = true;
+                document.getElementById('submitObservacao').disabled = true;
+            {%endif%}
+                if (id !== undefined){
+                $(".caixaComentario").remove();
+                $(".caixaComentarioUsuario").remove();
+                document.getElementById("referenciaEspec").style.visibility = "visible";
+                var bolinha = document.getElementsByClassName("bolinhaLateral");
+                if (bolinha.length > 0){
+                bolinha[0].innerHTML = "<p>" + id + "</p>";
+                }
+                $("input#tab1").removeAttr('checked');
+                $("input#tab2")[0].checked = true;
+                }
+                bolinhaAberta = id;
+                var referencia = document.getElementById("referenciaEspec");
+                var divHiddenNumCom = document.getElementById('hidden');
+                var span = tinyMCE.activeEditor.dom.select('span#' + id)[0];
+                if (span != null) {
+                var rex = /(<([^>]+)>)/ig;
+                referencia.textContent = "Referência: " + (span.innerText.replace(rex, ""));
+                divHiddenNumCom.textContent = (id);
+                }
+                var versaoAtual ={{ app.session.get('versaoAtual') }} ;
+                if (versaoAtual > 0) {
+                carregaObservacaoAll();
+                }
+                $(".comentarioEspec").animate({ scrollTop: $(".comentarioEspec").height() }, "slow");
+                return false;
+                }
+
+
+//chamar essa funcao apenas enquanto a tela estiver aberta a bolinha respectiva////
+                function carregaObservacaoAll() {
+                var versaoAtual ={{ app.session.get('versaoAtual') }} ;
+                arrayIdLastComment[bolinhaAberta] = (ultimaObserv);
+                if (bolinhaAberta > 0){
+                var dataString = {
+                "numComVersion": bolinhaAberta,
+                        "idVersionActivity": versaoAtual,
+                        "ultimaObserv":0
+                };
+                $(function () {
+                $.ajax({
+                type: 'post',
+                        data: JSON.stringify(dataString),
+                        contentType: 'application/json',
+                        dataType: 'json',
+                        url: "{{web_dir}}getObservacoesView",
+                        success: function (respC) {
+                        console.log(respC);
+                        if (respC.length > 0){
+                        $('.dataConversa').remove();
+                        $('.setaConversa', '.comentarioEspec').remove();
+                        $('.setaConversaUsuario', '.comentarioEspec').remove();
+                        for (var i = 0; i < respC.length; i++) {
+                        console.log("{{ app.session.get('idUser') }}");
+                        var dataSplit = respC[i].data.split("-");
+                        var novaData = dataSplit[2] + "/" + dataSplit[1] + "/" + dataSplit[0];
+                        var horaMinuto = respC[i].hora.split(":");
+                        var novoHorario = horaMinuto[0] + ":" + horaMinuto[1];
+                        var divDatas = document.getElementsByClassName("dataConversa");
+                        var flagData = true;
+                        for (var g = 0; g < divDatas.length; g++){
+                        if (divDatas[g].id == respC[i].data){
+                        flagData = false;
+                        }
+                        }
+                        if (flagData == true){
+                        $("#" + bolinhaAberta + ".caixaComentEsp").append("<div class='dataConversa' id='" + respC[i].data + "'>" + novaData + "</div"); //provisorio, só pra mostrar a data
+                        }
+                        if (respC[i].idAuthor != {{ app.session.get('idUser') }}){
+                        $("#" + bolinhaAberta + ".caixaComentEsp").append("<div class='caixaComentarioUsuario' id=" + bolinhaAberta + ">" + respC[i].nmUser + ": " + respC[i].txComment + "<div class='horarioConversa'>" + novoHorario + "</div></div><div class='setaConversa'></div>");
+                        } else{
+                        $("#" + bolinhaAberta + ".caixaComentEsp").append("<div class='caixaComentario' id=" + bolinhaAberta + ">" + respC[i].txComment + "<div class='horarioConversaUsuario'>" + novoHorario + "</div></div><div class='setaConversaUsuario'></div>");
+                        }
+                        ultimaObserv = respC[i].id_comment;
+                        }
+
+
+                        arrayIdLastComment[bolinhaAberta] = (ultimaObserv);
+                        }
+                        $(function () {
+                        $('.wide.sidebar.teal').sidebar('toggle');
+                        });
+                        var hContent = $("#editor").height();
+                        var hWindow = $(window).height();
+                        if (hContent > hWindow) {
+                        document.getElementById("menuComentarios").style.width = 47;
+                        }
+                        $("div#" + bolinhaAberta + ".caixaComentario").on('ready', function(){
+                        intervalCarregaNew = setInterval(carregaObservacaoNew, 5000);
+                        });
+                        }
+                });
+                });
+                }
+                }
+
+
+                function carregaObservacaoNew() {
+                var versaoAtual ={{ app.session.get('versaoAtual') }} ;
+                arrayIdLastComment[bolinhaAberta] = (ultimaObserv);
+                if ($(".ui.vertical right wide sidebar teal menu uncover visible").length > 0){
+                if (bolinhaAberta > 0){
+                var dataString = 'numComVersion=' + bolinhaAberta + '&idVersionActivity=' + versaoAtual + '&ultimaObserv=' + arrayIdLastComment[bolinhaAberta];
+                $.ajax({
+                type: "POST",
+                        url: "{{web_dir}}getObservacoesView",
+                        data: dataString,
+                        success: function (resp) {
+                        if (resp.length > 0){
+                        for (var i = 0; i < resp.length; i++) {
+                        for (data in resp[i]){
+                        console.log(data);
+                        console.log("{{ app.session.get('idUser') }}");
+                        var dataSplit = data.split("-");
+                        var novaData = dataSplit[2] + "/" + dataSplit[1] + "/" + dataSplit[0];
+                        $("#" + bolinhaAberta + ".caixaComentEsp").append("<div class='dataConversa' id='" + data + "'>" + novaData + "</div>"); // provisorio, só pra mostrar a data
+                        if (resp[i][data].idAuthor != {{ app.session.get('idUser') }}){
+                        $("#" + bolinhaAberta + ".caixaComentEsp").append("<div class='caixaComentarioUsuario' id=" + bolinhaAberta + ">" + resp[i][data].txComment + "</div>");
+                        } else{
+                        $("#" + bolinhaAberta + ".caixaComentEsp").append("<div class='caixaComentario' id=" + bolinhaAberta + ">" + resp[i][data].txComment + "</div>");
+                        }
+                        ultimaObserv = resp[i][data].id_comment;
+                        }
+                        }
+                        arrayIdLastComment[bolinhaAberta] = (ultimaObserv);
+                        }
+                        }
+                });
+                }
+                } else{
+                clearInterval(intervalCarregaNew);
+                bolinhaAberta = 0;
+                }
+                }
+
+                function posicionaNome(){
+                var nome = document.getElementById('infoAluno');
+                var foto = document.getElementById('fotoTutor');
+                var widthNome = $(nome).width();
+                var posicaoFoto = $(foto).offset();
+                var posicaoNome = $(nome).offset();
+                if ((posicaoNome.left + widthNome) >= posicaoFoto.left){
+                nome.style.marginLeft = - ((posicaoNome.left + widthNome) - posicaoFoto.left + 20);
+                }
+                }
+        </script>
+    </head>
+    <body>
+
+        <div id="cardContent">
+            <i id="close" class="large checkmark icon" onClick="closeCard();"></i>
+            <br>
+            <span id="conteudo"></span>
+        </div>
+        <div class="ui vertical right wide sidebar teal menu">
+            <div class="tab-main">
+                <div class="tabs">
+                    <input type="radio" name="tabs" id="tab1" checked="checked"/>
+                    <label for="tab1" style="padding: 0px;"><div id="abas1">geral</div></label>
+                    <div class="tab-content" style="padding: 0px">
+                        <div class="comentarioGeral" style="overflow-y: scroll;" id="scrollStyle">
+                            <div class="ui active centered loader"></div>
+                        </div>
+                        <form class="ui large form"  method="post" enctype="multipart/form-data"{{ form_start(form) }}
+                              <div id="footerInput">
+                                <div class="ui fluid input">
+                                    {{form_row(form.txComment, { 'attr' : { 'placeholder' : 'Comente aqui' }})}}
+                                    <label for='anexoCom' class="imagem"></label>
+                                    <input type='file' name='imagem' id="anexoCom" class="anexoComentario" onChange=''>
+                                    <button  id="submitGeral" type="submit"></button>
+                                </div>
+                            </div>
+                            {{form_row(form.save, {'attr' : { 'class' : 'invisivel' }})}}
+                            {{ form_end(form) }}
+                    </div>
+                </div>
+
+                <div class="tabs">
+                    <input type="radio"  name="tabs" id="tab2" />
+                    <label for="tab2" style="padding: 0px;"> <div id="abas2">observações</div></label>
+                    <div class="tab-content" style="padding: 0px">
+                        <div class="comentarioEspec" style="overflow-y: scroll;" id="scrollStyle">
+                            <div id="referenciaEspec" style="visibility: hidden"></div>
+                        </div>
+                        <div id="hidden"></div>
+                        <form class="ui large form" {{ form_start(form2) }}
+                              <div id="footerInput">
+                                <div class="ui fluid input">
+                                    {{form_row(form2.txComment, { 'attr' : { 'placeholder' : 'Comente aqui', 'required':'true' }})}}
+                                    <button class="ui button" id="submitObservacao" type="submit"> </button>
+                                </div>
+                            </div>
+                            {{form_row(form2.save, {'attr' : { 'class' : 'invisivel'}})}}
+                            {{ form_end(form2) }}
+
+                            <form class="ui large form" {{ form_start(form3) }}
+                                  {{ form_end(form3) }}
+                                  </div>
+                                </div>
+                                </div>
+                                </div>
+
+                                <div class="pusher" style="overflow-y: auto; overflow-y: initial;">
+                                    <div id="bolinhas"></div>
+
+                                    {% set texto= ""%}
+                                    {% set idVersionAtual = 0%}
+                                    {{ include('menuSuperiorTutor.html.twig') }}
+                                    {{ include('menuLateralMin.html.twig') }}
+                                    {%if versaoEscolhida is not empty%}
+                                        {% for v in versaoEscolhida %}
+                                            {% set texto =v.txActivity%}
+                                            {% set idVersionAtual =v.idVersionActivity%}
+                                        {% endfor%}
+                                    {%endif%}
+
+                                    <div id="editor" class="ui main text container" >
+
+                                        <textarea id="texto" name="texto">
+                                            {{texto}}
+                                        </textarea>
+
+                                        </form>
+                                    </div>
+                                    {%for dados in dadosUsuarios%}
+
+                                        <div id="infoAluno"><h4>{{dados.nome}}</h4></div>
+                                                {% if dados.foto is empty %}
+                                            <div id="fotoTutor" style="background-size: 100% 102%;"></div>
+                                        {% else %}
+                                            <div id="fotoTutor" style="background-image: url('data:image/jpeg;base64,{{dados.foto}}');"></div>
+                                        {% endif %}
+
+                                    {%endfor%}
+                                    <script>
+                                        posicionaNome();
+                                    </script>
+                                    <div id="contador" title="Contagem de Palavras" onclick="contaPalavras();"><img src="/webfolio/assets/Contador.png"></div>
+                                        {%if flagVisitante == true%}
+                                            {%if flagPermissaoVisitante == true%}
+                                            <div class="menucomentarios" title="Conversa" id="menuComentarios" onClick="abreBarra({{flagVisitante}}), carregaComGeral({{ app.session.get('atividadeAtual') }}, {{ app.session.get('idUser') }}, '{{web_dir}}');"><a href="#">&lsaquo;&lsaquo;</a></div>
+                                        {%endif%}
+                                    {%else%}
+                                        <div class="menucomentarios" title="Conversa" id="menuComentarios" onClick="abreBarra({{flagVisitante}}), carregaComGeral({{ app.session.get('atividadeAtual') }}, {{ app.session.get('idUser') }}, '{{web_dir}}');"><a href="#">&lsaquo;&lsaquo;</a></div>
+                                    {%endif%}
+                                    {% if numNotices >0 %}
+                                        <div id="bolinhaLateral">{{numNotices}} </div>
+                                    {% endif %}
+                                </div>
+
+                                <script>
+                                    $('.ui.dropdown').dropdown();
+                                    function contaPalavras(){
+                                    var theEditor = tinymce.activeEditor;
+                                    var texto = tinyMCE.activeEditor.getContent({format : 'text'});
+                                    var nr = texto.split(/[\s,]+/);
+                                    var wordCount = theEditor.plugins.wordcount.getCount();
+                                    var card = document.getElementById("cardContent");
+                                    var desc = document.getElementById("conteudo");
+                                    var strip = (tinyMCE.activeEditor.getContent()).replace(/(<([^>]+)>)/ig, "");
+                                    var text = strip.length;
+                                    var numberOfLineBreaks = (strip.match(/\n/g) || []).length;
+                                    text = text - numberOfLineBreaks;
+                                    desc.innerHTML = "<p>Palavras: " + wordCount + "</p><p>Caracteres: " + text;
+                                    if (card.className !== "transition visible") {
+                                    $(card).transition('fade down');
+                                    }
+                                    }
+                                    function closeCard() {
+                                    var card = document.getElementById("cardContent");
+                                    $(card).transition('fade down');
+                                    }
+                                </script>
+                                </body>
+                                </html>
+                                <!-- /TinyMCE -->

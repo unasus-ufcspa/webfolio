@@ -1,0 +1,12 @@
+# This file is auto-generated during the composer install
+parameters:
+    database_host: << Endereço do Servidor de Banco de Dados >>
+    database_port: << Porta do Banco de Dados >>
+    database_name: << Nome do Banco de Dados >>
+    database_user: << Usuário do Banco de Dados >>
+    database_password: << Senha >>
+    mailer_transport: smtp
+    mailer_host: 127.0.0.1
+    mailer_user: null
+    mailer_password: null
+    secret: ThisTokenIsNotSoSecretChangeIt

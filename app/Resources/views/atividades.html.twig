@@ -1,0 +1,257 @@
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" media="all" type="text/css" href="/webfolio/jcarousellite/demo/style/style-demo.css">
+
+        <script src="/webfolio/jcarousellite/demo/script/jquery-1.11.1.js"></script>
+        <script src="/webfolio/jcarousellite/demo/script/jquery.easing-1.3.js"></script>
+        <script src="/webfolio/jcarousellite/demo/script/jquery.mousewheel-3.1.12.js"></script>
+        <script src="/webfolio/jcarousellite/demo/script/jquery.jcarousellite.js"></script>
+
+        <!-- Standard Meta -->
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+
+        <!-- Site Properties -->
+        <title>Atividades</title>
+
+        <link rel="stylesheet" type="text/css" href="/webfolio/semantic/dist/semantic.min.css">
+
+        <script src="/webfolio/semantic/dist/components/form.js"></script>
+        <script src="/webfolio/semantic/dist/components/modal.js"></script>
+        <script src="/webfolio/semantic/dist/components/dimmer.js"></script>
+        <script src="/webfolio/semantic/dist/components/transition.js"></script>
+        <script src="/webfolio/semantic/dist/components/sidebar.js"></script>
+        <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:100i,300i,400">
+        <link rel="stylesheet" type="text/css" href="/webfolio/assets/css/atividades.css">
+        <script type="text/javascript">
+
+            $(function () {
+                for (var i = 0; i < {{atividades|length}}; i++) {
+                    $(".nonImageContent" + i + ".nonCircular .carousel").jCarouselLite({
+                        btnNext: ".nonImageContent" + i + ".nonCircular .next",
+                        btnPrev: ".nonImageContent" + i + ".nonCircular .prev",
+                        visible: 4,
+                        circular: false
+                    });
+                }
+            });
+
+            function hasClass(element, cls) {
+                return (' ' + element.className + ' ').indexOf(' ' + cls + ' ') > -1;
+            }
+
+            var flagDs="FECHADO";
+            function descricaoAtividade(titulo, descricao) {
+                $( ".tituloAtividade" ).html(titulo);
+                $( ".objetivoAtividade" ).html(descricao);
+                $('.ui.right.sidebar')
+                  .sidebar({
+                  dimPage: false,
+                  closable:false
+                });
+                if(hasClass(document.getElementById("dsAtividade"), 'visible')){
+                  flagDs="ABERTO";
+                }else{
+                  flagDs="FECHADO";
+                }
+                if(flagDs=="FECHADO"){
+                  $('.ui.right.sidebar')
+                    .sidebar('setting', 'transition', 'overlay').sidebar('toggle');
+                    flagDs="ABERTO";
+                }
+            }
+        </script>
+    </head>
+    <body onload="removerEstilo();">
+
+        <div id="dsAtividade" class="ui right wide sidebar vertical menu">
+          <i id="closeDescricao" class="big remove icon"></i>
+          <h2 class="tituloAtividade">TÍTULO</h4>
+          <h5>OBJETIVO:</h5>
+          <div class="objetivoAtividade scrollStyle"></div>
+        </div>
+
+        <div class="pusher">
+          {{ include('menuLateralMin.html.twig') }}
+          <div id="tituloBarra"><h2 id="titulo">Atividades</h2><div id="barra"></div></div>
+          <div id="busca">
+            <div class="ui icon input fluid">
+              <input type="text" placeholder="Pesquisar" id="campoBusca">
+              <i class="search link icon"></i>
+            </div>
+          </div>
+
+
+            <div id="box">
+              <h2 id="naoEncontrado">Nenhum resultado encontrado</h2>
+                <div class="topo"> </div>
+                <div class="ui centered grid">
+                    <div id="jcl-demo" style="min-width: 50%;">
+                        {% set counter = 0 %}
+                        {% set counterFoto = 0 %}
+                        {% for at in atividades %}
+                        <div class="itemUsuario">
+                            <div class="custom-container nonCircular nonImageContent{{counter}}">
+                                {% if at[counterFoto].foto is empty %}
+                                    <h4 class="nomeUs">
+                                        {%if at[counterFoto].nmUser|length < 35 %}
+                                            {{ at[counterFoto].nmUser }}
+                                        {%else%}
+                                            {{ at[counterFoto].nmUser [0:35] }}<br>{{ at[counterFoto].nmUser [35:] }}
+                                        {%endif%}
+                                    </h4>
+                                    <div class=" iconAluno">
+                                        <img src="\webfolio\assets\pessoa.png" id="fotoDefault">
+                                    </div>
+                                {% else %}
+                                    <h4 class="nomeUs">
+                                        {%if at[counterFoto].nmUser|length < 35 %}
+                                            {{ at[counterFoto].nmUser }}
+                                        {%else%}
+                                            {{ at[counterFoto].nmUser [:35] }}<br>{{ at[counterFoto].nmUser [35:] }}
+                                        {%endif%}
+                                    </h4>
+                                    <img src="data:image/jpeg;base64,{{ at[counterFoto].foto}}" class="iconAluno">
+                                {% endif %}
+
+                                {% set counterAtividades = 0 %}
+                                {% for usu in at %}
+                                    {% set counterAtividades = counterAtividades+1 %}
+                                {% endfor %}
+                                {% if counterAtividades>4 %}
+                                    <a href="#" class="prev">&lsaquo;&lsaquo;</a>
+                                    <div class="carousel">
+                                        <ul>
+                                            {% for usu in at %}
+                                                {% if usu.dtConclusion is empty %}
+                                                    {# normal#}
+                                                    <li style="position: relative;">
+                                                        <i class="large content icon" id="conteudoPortfolio" onClick="descricaoAtividade('{{usu.dsTitle }}', '{{usu.dsDescription }}');"></i>
+                                                        {% if usu.notice >0%} <span class="notice">{{ usu.notice }}</span> {% endif %}
+                                                        <a href="../editor/{{usu.id_activity_student}}/{{usu.idVersionActivity}}" >
+                                                            <p class="item"><br>{{ usu.dsTitle }}</p>
+                                                        </a>
+                                                    </li>
+                                                {% else %}
+                                                    {#cinza#}
+                                                    <li style="position: relative;">
+                                                        <i class="big checkmark icon" id="conteudoPortfolio" onClick="descricaoAtividade('{{usu.dsTitle }}', '{{usu.dsDescription }}');"></i>
+                                                        {% if usu.notice >0%} <span class="notice">{{ usu.notice }}</span> {% endif %}
+                                                        <a href="../editor/{{usu.id_activity_student}}/{{usu.idVersionActivity}}" >
+                                                            <p class="item" id="portfolioConcluido"><br>{{ usu.dsTitle }}</p>
+                                                        </a>
+                                                    </li>
+                                                {% endif %}
+
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                    <a href="#" class="next">&rsaquo;&rsaquo;</a>
+                                {% else %}
+                                    <div class="carousel">
+                                        <ul>
+                                            {% for usu in at %}
+                                                {% if usu.dtConclusion is empty %}
+                                                    {#normal#}
+                                                    <li style="position: relative;">
+                                                        <i class="large content icon" id="conteudoPortfolio" onClick="descricaoAtividade('{{usu.dsTitle }}', '{{usu.dsDescription }}');"></i>
+                                                        {% if usu.notice >0%} <span class="notice">{{ usu.notice }}</span> {% endif %}
+                                                        <a href="../editor/{{usu.id_activity_student}}/{{usu.idVersionActivity}}" >
+                                                            <p class="item"><br>{{ usu.dsTitle }}</p>
+                                                        </a>
+                                                    </li>
+
+                                                {% else %}
+                                                    {#cinza#}
+                                                    <li style="position: relative;">
+                                                        <i class="big checkmark icon" style="margin-top:5px;" id="conteudoPortfolio" onClick="descricaoAtividade('{{usu.dsTitle }}', '{{usu.dsDescription }}');"></i>
+                                                        {% if usu.notice >0%} <span class="notice">{{ usu.notice }}</span> {% endif %}
+                                                        <a href="../editor/{{usu.id_activity_student}}/{{usu.idVersionActivity}}" >
+                                                            <p class="item" id="portfolioConcluido"><br>{{ usu.dsTitle }}</p>
+                                                        </a>
+                                                    </li>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                {% endif %}
+                                <div class="clear"></div>
+                            </div>
+                            {% set counter = counter + 1 %}
+                            <div class="ui divider" id="divisor"></div>
+                          </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
+<script>
+    window.onload = function removerEstilo() {
+        var lis = document.getElementsByTagName("li");
+        for (var i = 0; i < lis.length; i++) {
+            lis[i].style.overflow = "visible";
+        }
+    };
+
+//FUNÇÕES DA BUSCA
+    var fazerBusca = function(){
+      var txt = $('#campoBusca').val();
+      $('.nomeUs').each(function(){
+         if($(this).text().toUpperCase().indexOf(txt.toUpperCase()) == -1){
+             $(this).closest('.itemUsuario').hide();
+         }
+      });
+      var itens = document.getElementsByClassName("itemUsuario");
+      var flagItens= true;
+      for(var i=0; i<itens.length; i++){
+        if(itens[i].style.display!="none"){
+          flagItens=false;
+        }
+      }
+      if(flagItens){
+        document.getElementById("naoEncontrado").style.visibility="visible";
+      }else{
+        document.getElementById("naoEncontrado").style.visibility="hidden";
+      }
+    };
+
+    var limparBusca = function(){
+      $('.nomeUs').each(function(){
+         $(this).closest('.itemUsuario').show();
+      });
+    };
+
+    $("#campoBusca").keydown(function(e) {
+        limparBusca();
+        fazerBusca();
+    });
+
+    $('.search').click(function(){
+      if($('#campoBusca').val()!=""){
+        limparBusca();
+        fazerBusca();
+      }else{
+        limparBusca();
+      }
+    });
+
+    var closeDescricao = function(){
+        if(flagDs=="ABERTO"){
+          $('.ui.right.sidebar')
+            .sidebar('setting', 'transition', 'overlay').sidebar('toggle');
+            flagDs="FECHADO";
+        }
+    }
+    $("#busca").click(function(){
+      closeDescricao();
+    });
+
+    $("#closeDescricao").click(function(){
+      closeDescricao();
+    });
+</script>

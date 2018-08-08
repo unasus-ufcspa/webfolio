@@ -1,0 +1,89 @@
+/*Vamos ocultar o Input*/
+          .tabs input[type="radio"] {
+              opacity:0;
+          }
+ 
+          /**
+          * Vamos definir o container que vai englobar tudo
+          * Nele vamos adicionar o position:relative, pra
+          * definir o espaço que os elementos internos vão ter que seguir
+          * já que um irá utilizar o position:absolute;
+          **/
+          .tab-main{
+              position:relative;
+              width: 650px;
+              padding: 0;
+              margin: 0 auto;
+          }
+          /**
+          * Definimos float:left nas abas
+          */
+          .tabs{
+              float:left;
+          }
+ 
+          /**
+          * Vamos configurar o label, que será
+          * a nossa aba.
+          * Definimos também um position:relative
+          * porque vamos definir z-index, pra sobrepor,
+          * para compor o efeito.
+          */
+          .tabs label {
+              display: block;
+              padding: 5px 20px;
+              font-weight: normal;
+              cursor: pointer;
+              position: relative;
+              top: 0;
+              z-index:1;
+              margin-right:1px;
+          }
+ 
+          /**
+          * Aqui define o elemento que engloba o texto.
+          * Por padrão vamos ocultar esse elemento
+          * E vamos definir position absolute.
+          * Definimos um afastamento do topo, e z-index:0
+          * para o Label ficar sobreposto a ele
+          *
+          **/
+          .tab-content{
+              display:none;
+              text-align: left;
+              width: 100%;
+              font-size: 20px;
+              line-height: 140%;
+              padding-top: 10px;
+            
+              padding: 0 15px;
+              color: #333;
+              position: absolute;
+              top: 49px;
+              left: 0;
+              z-index:0;
+ 
+          }
+ 
+          /**
+          * Agora vamos usar o seletores.
+          * Selecionar o elemento Label que segue o elemento com atributo id que comece o tab,
+          * desde que ele seja marcado (:checked).
+          * Que no caso é o input. Aqui colocar uma borda branca no bottom
+          */
+ 
+          [id^=tab]:checked + label {
+            
+		
+ 
+          }
+          /**
+          * Faremos a mesma coisa do anterior, só que vamos usar o ~
+          * para informar que selecione o elemento .tab-content
+          * que está sendo precedido pelo atributo id com o valor
+          * começado o tab, e selecionado (checked)
+          */
+ 
+          [id^=tab]:checked ~ .tab-content {
+              display: block;
+          }

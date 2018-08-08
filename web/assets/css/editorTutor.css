@@ -1,0 +1,519 @@
+@import 'https://fonts.googleapis.com/css?family=Roboto:100,400';
+*{
+    font-family: 'Roboto', sans-serif;
+    font-weight: 100;
+}
+body{
+    position: relative;
+    height: 100%;
+    overflow-x: auto;
+}
+
+.mce-tinymce {
+    box-shadow: 0 10px 20px rgba(0,0,0,0.15), 0 10px 12px rgba(0,0,0,0.15);
+}
+.mce-container.mce-menubar.mce-toolbar.mce-stack-layout-item.mce-first, .mce-edit-area.mce-container.mce-panel.mce-stack-layout-item.mce-last{
+    border: none;
+}
+.numVersion{
+    background-color: #70e7d0;
+    -webkit-border-radius:50%;
+    -moz-border-radius:50%;
+    border-radius: 50%;
+    height: 50px;
+    width: 50px;
+}
+
+
+.ui.sidebar {
+    overflow: visible !important;
+}
+#comentarios{
+    color: white;
+    background: #70e7d0;
+    width:  20%;
+    height: 100%;
+    position: absolute;
+    left:80%;
+}
+#editor{
+    position: absolute;
+    margin-top: 80px;
+    margin-bottom: 100px;
+    margin-right: 100px;
+    left:23%;
+}
+.comment{
+    background-color: black;
+}
+
+
+
+.bolinha{
+    background-color: #70e7d0;
+    -webkit-border-radius:50%;
+    -moz-border-radius:50%;
+    border-radius: 50%;
+    position:absolute;
+    height: 25px;
+    width: 25px;
+    left: 21%;
+    color: white;
+    text-align: center;
+    padding-top: 3px;
+}
+#bolinhaLateral{
+    background-size: 100% 100%;
+    background-image: url("/webfolio/assets/general_comment_ballon.png");
+    position: fixed;
+    right:1%;
+    top:33%;
+    width: 40px;
+    height: 30px;
+    font-size: large;
+    text-align: center;
+    line-height: 20px;
+
+}
+
+.bolinhaLateral{
+    background-color: #70e7d0;
+    -webkit-border-radius:50%;
+    -moz-border-radius:50%;
+    border-radius: 50%;
+    position:absolute;
+    height: 25px;
+    width: 25px;
+    color: white;
+    text-align: center;
+}
+.bolinhaTemporaria{
+    background-color: white;
+    -webkit-border-radius:50%;
+    -moz-border-radius:50%;
+    border-radius: 50%;
+    position:absolute;
+    height: 25px;
+    width: 25px;
+    left: 21%;
+    color: #70e7d0;
+    text-align: center;
+    border-style: solid;
+    border-color: #70e7d0;
+    border-width: 2px;
+}
+#bolinha{
+    background-color: #70e7d0;
+    -webkit-border-radius:50%;
+    -moz-border-radius:50%;
+    border-radius: 50%;
+    position:absolute;
+    height: 25px;
+    width: 25px;
+    left: 21%;
+    color: white;
+    text-align: center;
+    line-height: 25px;
+}
+
+.comentarioEspec{
+    background-color: #e6e7e8;
+    width: 100%;
+    height:90vh;
+}
+.comentarioGeral{
+    width: 100%;
+    height:90vh;
+    background-color:#61c6b7;
+}
+#abas1{
+    height: 50px;
+    font-size:large;
+    color: white;
+    text-align: center;
+    line-height: 70px;
+    background-color:#61c6b7;
+    font-weight: 400;
+}
+#abas2{
+    height: 50px;
+    font-size:large;
+    color: #808080;
+    text-align: left;
+    padding-left: 15%;
+    line-height: 70px;
+    background-color: #e6e7e8;
+    font-weight: 400;
+}
+.invisivel{
+    visibility: hidden;
+}
+#menuComentarios{
+    background-color: #70e7d0;
+    position: fixed;
+    right:0%;
+    top:35%;
+    width: 30px;
+    height: 80px;
+    font-size: XX-large;
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+    text-align: center;
+    cursor: pointer;
+}
+#menuComentarios a{
+    color:white;
+    position: absolute;
+    top:35%;
+    left: 25%;
+}
+
+.caixaComentario{
+    visibility: visible;
+    padding: 5px;
+    border-radius:5px;
+    margin-left: 13%;
+    margin-top: 2%;
+    margin-bottom: 1%;
+    width: 40%;
+    min-height:50px;
+    background-color: white;
+    font-size:medium;
+    color: #BBBBBB;
+}
+.caixaComentarioUsuario{
+    padding: 5px;
+    border-radius:5px;
+    margin-left: 2%;
+    margin-top: 2%;
+    margin-bottom: 1%;
+    width: 40%;
+    min-height:50px;
+    background-color: white;
+    font-size:medium;
+    color: #BBBBBB;
+}
+.caixaComentarioGeral{
+    visibility: visible;
+    padding: 5px;
+    border-radius:5px;
+    margin-left: 23%;
+    margin-top: 2%;
+    margin-bottom: 1%;
+    width: 30%;
+    min-height:50px;
+    background-color: white;
+    font-size:medium;
+    color: #BBBBBB;
+}
+
+
+.caixaComentarioUsuarioAnexo{
+    padding: 5px;
+    border-radius:5px;
+    margin-left: 2%;
+    margin-top: 2%;
+    margin-bottom: 1%;
+    width: 30%;
+    min-height:50px;
+    font-size:medium;
+    color: #BBBBBB;
+}
+.caixaComentarioUsuarioAnexo .horarioConversa{
+    color: white;
+}
+.caixaComentarioUsuarioAnexo a{
+    color: white;
+}
+.caixaComentarioAnexo{
+    visibility: visible;
+    padding: 5px;
+    border-radius:5px;
+    margin-left: 23%;
+    margin-top: 2%;
+    margin-bottom: 1%;
+    width: 30%;
+    min-height:50px;
+    font-size:medium;
+    color: #BBBBBB;
+}
+.caixaComentarioAnexo .horarioConversaUsuario{
+    color: white;
+}
+.caixaComentarioAnexo a{
+    color: white;
+}
+.caixaComentarioUsuarioGeral{
+    padding: 5px;
+    border-radius:5px;
+    margin-left: 2%;
+    margin-top: 2%;
+    margin-bottom: 1%;
+    width: 30%;
+    min-height:50px;
+    background-color: white;
+    font-size:medium;
+    color: #BBBBBB;
+}
+
+#hidden{
+    display:none;
+}
+.tabs{
+    width: 30%;
+    margin: 0px;
+    height: 10%
+}
+.tabs label{
+    width:30%;
+    position: absolute;
+    top:0px;
+}
+#footerInput {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+}
+
+.caixaMarcadores{
+    position: absolute;
+    top: 82px;
+    left: 250px;
+    float: left;
+    width: 50px;
+    min-height: 700px;
+    max-height: 700px;
+    background-color: #BBBBBB;
+    border: 1px dashed red;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+.bolinhaMult{
+    background-color: #70e7d0;
+    -webkit-border-radius:50%;
+    -moz-border-radius:50%;
+    border-radius: 50%;
+    position:absolute;
+    height: 25px;
+    width: 25px;
+    left: 21%;
+    color: white;
+    text-align: center;
+    padding-top: -3px;
+}
+.bolinhaMult p, .bolinha p{
+    font-weight: 400;
+}
+#referenciaEspec{
+    padding: 5px;
+    margin-left: 2%;
+    margin-top: 2%;
+    margin-bottom: 1%;
+    width: 50%;
+    min-height:50px;
+    background-color: #FFF;
+    font-size:medium;
+    color: #BBB;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 400;
+}
+
+
+/* Scroll*/
+#scrollStyle::-webkit-scrollbar {
+    width: 8px;
+}
+
+/* Track */
+#scrollStyle::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+    -webkit-border-radius: 10px;
+    border-radius: 10px;
+}
+
+/* Handle */
+#scrollStyle::-webkit-scrollbar-thumb {
+    -webkit-border-radius: 10px;
+    border-radius: 10px;
+    background: rgba(176, 176, 176, 1);
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5);
+}
+#scrollStyle::-webkit-scrollbar-thumb:window-inactive {
+    background: rgba(176, 176, 176, 0.4)
+}
+div.ui.fluid.input div{
+    width: 100%;
+}
+
+
+#infoAluno{
+    font-family: 'Roboto', sans-serif;
+    font-weight: 100;
+    position: absolute;
+    left:78%;
+    margin-top: 60px;
+}
+#fotoTutor{
+    background-color: #FFF;
+    background-image: url("/webfolio/assets/pessoa.png");
+    background-size: 104% 102%;
+    width:4%;
+    height: 8%;
+    position: absolute;
+    left:86%;
+    top: 2%;
+    z-index: 98;
+    border-radius: 50%;
+    border: 3px solid #70E7D0;
+}
+#contador{
+    position: absolute;
+    left: 81%;
+    top: 0.2%;
+    z-index: 98;
+    cursor: pointer;
+}
+#contador img{
+    width:45px;
+    height: 45px;
+}
+
+
+
+
+@media all and (max-width: 1500px) {
+    #fotoTutor{
+        position: fixed;
+        width:55px;
+        height: 55px;
+        left: 89%;
+    }
+    #infoAluno{
+        left: 73%;
+    }
+    div#contador{
+        position: fixed;
+    }
+}
+@media all and (max-height: 700px) {
+    #fotoTutor{
+        height: 55px;
+        width:55px;
+    }
+}
+
+.dataConversa{
+    width: 90px;
+    height: 30px;
+    background-color: #666666;
+    margin-left: 20%;
+    font-size: small;
+    border-radius: 3px;
+    color: white;
+    text-align: center;
+}
+.dataConversaGeral{
+    width: 90px;
+    height: 30px;
+    background-color: #666666;
+    margin-left: 20%;
+    margin-top: 10px;
+    font-size: small;
+    border-radius: 3px;
+    color: white;
+    text-align: center;
+}
+#cardContent{
+    position: absolute;
+    top:50%;
+    left: 55%;
+    width: 250px;
+    height: 100px;
+    margin-top:-150px;
+    margin-left: -250px;
+    background-color: white;
+    visibility: hidden;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.15), 0 10px 12px rgba(0,0,0,0.15);
+    z-index:99;
+    overflow-y: auto;
+    text-align: center;
+}
+#close{
+    float: right;
+    cursor: pointer;
+}
+.horarioConversaUsuario{
+    font-size: x-small;
+    color:#BBBBBB;
+    margin-left: 85%;
+    height: 18px;
+}
+.horarioConversa{
+    font-size: x-small;
+    color:#BBBBBB;
+    height: 18px;
+}
+.setaConversaUsuario{
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 4px 0 4px 10px;
+    border-color: transparent transparent transparent #ffffff;
+    margin-left: 52.6%;
+    margin-top: -16px;
+    margin-bottom: 0px;
+}
+.setaConversa{
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 4px 10px 4px 0;
+    border-color: transparent #ffffff transparent transparent;
+    margin-top: -16px;
+    margin-left: 5px;
+}
+input[type='file'] {
+    display: none
+}
+label.imagem {
+    width: 20%;
+    float: right;
+    -webkit-border-radius:60%;
+    -moz-border-radius:60%;
+    border-radius: 60%;
+    cursor: pointer;
+    background-size: 100% 100%;
+    position: relative;
+    background-color: #70E7D0;
+    padding: 0px;
+    background-image: url("/webfolio/assets/anexoBranco.png");
+}
+#anexoCaixa{
+    width: 20%;
+    float: left;
+    position: relative;
+}
+#submitGeral{
+    width: 20%;
+    float: right;
+    background-size: 100% 100%;
+    position: relative;
+    background-color: white;
+    padding: 0px;
+    border: none;
+    background-image: url("/webfolio/assets/bt_send.png");
+}
+#submitObservacao{
+    width: 20%;
+    float: right;
+    background-size: 100% 100%;
+    position: relative;
+    background-color: white;
+    padding: 0px;
+    border: none;
+    background-image: url("/webfolio/assets/bt_send.png");
+}
+.ui.loader.active{
+    position: relative;
+    left: 30%;
+}

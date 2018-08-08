@@ -1,0 +1,129 @@
+{# empty Twig template #}
+<html>
+    <head>
+        <title>Anotações</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <link rel="stylesheet" title="Preferred" type="text/css" href="/webfolio/semantic/dist/semantic.min.css">
+        {#<link rel="stylesheet" type="text/css" href="/webfolio/assets/css/sidebarComentarios.css">#}
+        <script type="text/javascript"  src="/webfolio/tinymce/js/tinymce/tinymce.min.js"></script>
+        <script src="/webfolio/node_modules/semantic-ui/node_modules/jquery/dist/jquery.min.js"></script>
+        <script src="/webfolio/semantic/dist/components/visibility.js"></script>
+        <script src="/webfolio/semantic/dist/components/sidebar.js"></script>
+
+        <script src="/webfolio/node_modules/semantic-ui/node_modules/jquery/dist/jquery.min.js"></script>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        {#<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">#}
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+        <script src="/webfolio/semantic/dist/components/transition.js"></script>
+
+        <style>
+            @import 'https://fonts.googleapis.com/css?family=Roboto:100,400';
+            *{
+                font-family: 'Roboto', sans-serif;
+                font-weight: 100;
+            }
+            #titulo{
+                position: relative;
+                left: 5%;
+                color:#666666;
+                font-family: 'Roboto', sans-serif;
+                font-weight: 100;
+            }
+            #cardContent{
+                position: absolute;
+                top:10%;
+                left: 15%;
+                width: 70%;
+                max-height: 80%;
+                min-height: 80%;                
+                background-color: white;
+                box-shadow: 0 0px 50px rgba(0,0,0,0.20);
+                z-index:99;
+                overflow-y: auto;
+                padding-top:2%;
+            }
+            #divInput{
+                width: 100%;
+                height:20%;
+                position: absolute;
+                bottom: 0%;
+                background-color: #f3f4f2;
+                z-index:100;
+            }
+            #inputReferencia{
+                position: relative;
+                top: 6%;
+                left: 17%;
+                border: none;
+                resize: none;
+            }
+            #inputReferencia:focus{
+                border: none;
+                resize: none;
+                outline-color: #fff;
+            }
+            #botaoSave{
+                position: relative;
+                right: -18%;
+                cursor: pointer;
+            }
+            #itens{
+                position: absolute;
+                top:12%;
+                left: 5%;
+                width: 90%;
+                max-height: 80%;
+                min-height: 80%;
+                overflow-y: auto;
+            }
+            #marcador{
+                border-radius: 50%;
+                width: 15px;
+                height: 15px;
+                background-color: #70E7D0;
+                float: left;
+                margin-right:10px;
+            }
+        </style>
+        <script type="text/javascript">
+
+            $(function () {
+                $("#botaoSave").click(function () {
+                    var referencia = $("textarea#inputReferencia").val();
+                 
+                    var dataString = 'annotation=' + referencia +'';
+                    $.ajax({
+                        type: "POST",
+                        url: "{{web_dir}}salvarAnotacao",
+                        data: dataString,
+                        success: function (resp) {
+                            $("#itens").append("<div id='marcador'></div><p>" + referencia + "</p>");
+                        },
+                        error: function (e) {
+                            console.debug(e);
+                            console.log("erro");
+                        }
+                    });
+                return false;
+            });
+        });
+        </script>
+    </head>
+    <body>
+        {{ include('menuLateralMin.html.twig') }}
+
+        <div id="cardContent">
+            <h1 id="titulo">ANOTAÇÕES</h1>
+            <div id="itens">
+                {% for ref in referencias %}
+                    <div id="marcador"></div><p>{{ref.ds_annotation}}</p>                
+                {% endfor%}
+            </div>
+        </div>
+        <div id="divInput">
+            <textarea id="inputReferencia" rows="7" cols="180" placeholder="escreva aqui"></textarea>
+            <img src="/webfolio/assets/bt_send.png" width="50" height="50" id="botaoSave">
+        </div>
+    </body>
+</html>

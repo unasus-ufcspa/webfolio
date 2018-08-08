@@ -1,0 +1,58 @@
+    @import 'https://fonts.googleapis.com/css?family=Roboto:100,400';
+    html, body{
+        height: 100%;
+    }
+    span{
+        font-weight: 400;
+    }
+    h2{
+        font-family: 'Roboto', sans-serif;
+        font-weight: 100;
+    }
+    #titulo{
+        color:#666666;
+        margin-bottom:10px;
+    }
+    #barra{
+        border-bottom: 1px solid #666666;
+        width: 500px;
+    }
+    #tituloBarra{
+        width: 600px;
+        height: 50px;
+        position: absolute;
+        left: 15%;
+        top: 5%;
+    }
+    #divRelatorios{
+        margin-left: 15%;
+        width: 80%;
+        min-height: 70%;
+        margin-top:8%;
+    }
+
+    #itemAluno, #itemAlunoFoto{
+      width: 7%;
+      height: 0px;
+      padding-bottom: 7%;
+      margin: 3%;
+      margin-left: 3%;
+      margin-bottom: 4%;
+      background-size: 100% 100%;
+      float: left;
+      position: relative;
+    }
+    #itemAluno{
+      background-image: url("/webfolio/assets/AlunoRelatorios.png"); /*>>>IMAGEM PADRÃO CASO NÃO HAJA IMAGEM DO ALUNO<<*/
+    }
+    #itemAlunoFoto{
+        border-radius:100px;
+    }
+
+    #nomeAluno{
+        color: #808080;
+        text-decoration: none;
+        margin-top: 10.5%;
+        margin-left: -9%;
+        float: left;
+    }

@@ -1,0 +1,21 @@
+{# empty Twig template #}
+<script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.12.2.min.js"></script>
+<script src="https://www.gstatic.com/firebasejs/3.5.1/firebase.js"></script>
+<script>
+    // Initialize Firebase
+    var config = {
+        apiKey: "AIzaSyD_OStPHBrcmrN1VAfHqAsqGCgM85QDnGY",
+        authDomain: "folio-f0a6f.firebaseapp.com",
+        databaseURL: "https://folio-f0a6f.firebaseio.com",
+        storageBucket: "folio-f0a6f.appspot.com",
+        messagingSenderId: "6428829419"
+    };
+    var mainApp = firebase.initializeApp(config);
+ 
+        mainApp.database().ref('portfolio_class').push({
+            username: "teste",
+            email: "teste",
+            profile_picture: "teste"
+        });
+    
+</script> 
